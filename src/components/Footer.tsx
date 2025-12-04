@@ -1,70 +1,152 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { SocialIcons } from './SocialIcons';
+import { Phone, Mail, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
 
-interface FooterProps {
-  logo: string;
-  description: string;
-  socialLinks: { name: string; url: string; icon: string }[];
-  footerLinks: { title: string; links: { label: string; href: string }[] }[];
-}
-
-export const Footer = ({ logo, description, socialLinks, footerLinks }: FooterProps) => {
+export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo y descripción */}
-          <div className="col-span-1">
-            <div className="mb-4">
-              <Link href="/">
-                <Image 
-                  src={logo} 
-                  alt="Logo" 
-                  width={120} 
-                  height={40} 
-                  className="h-10 w-auto"
-                />
-              </Link>
-            </div>
-            <p className="text-gray-400 mb-6">{description}</p>
-            <SocialIcons socialLinks={socialLinks} className="mt-2" />
+    <footer className="bg-gray-900 text-gray-300 pt-16 pb-8">
+      <div className="container mx-auto px-4">
+        {/* Main Footer Bands (4 Columns) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+
+          {/* Column 1: Contacto Principal */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-6 border-b-2 border-yellow-500 inline-block pb-1">
+              Contáctenos
+            </h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-1" />
+                <span className="text-sm leading-relaxed">
+                  Juan Jose Pequeña entre Alonso de Mercadillo y Azuay, Loja, Ecuador
+                </span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+                <a href="tel:+593963410409" className="text-sm hover:text-white transition-colors">
+                  +593 96 341 0409
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+                <a href="mailto:reservas@hotelloja.com" className="text-sm hover:text-white transition-colors">
+                  reservas@hotelloja.com
+                </a>
+              </li>
+            </ul>
           </div>
 
-          {/* Enlaces del footer */}
-          {footerLinks.map((section, index) => (
-            <div key={index} className="col-span-1">
-              <h3 className="text-white font-semibold mb-4 text-lg">{section.title}</h3>
-              <ul className="space-y-3">
-                {section.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
-                    <Link 
-                      href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          {/* Column 2: Navegación Rápida */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-6 border-b-2 border-yellow-500 inline-block pb-1">
+              Navegación Rápida
+            </h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Inicio
+                </Link>
+              </li>
+              <li>
+                <Link href="/galeria" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Galería
+                </Link>
+              </li>
+              <li>
+                <Link href="/habitaciones" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Habitaciones
+                </Link>
+              </li>
+              <li>
+                <Link href="/servicios" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Servicios
+                </Link>
+              </li>
+              <li>
+                <Link href="/contacto" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Contacto
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Requisitos Legales (LOPDP) */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-6 border-b-2 border-yellow-500 inline-block pb-1">
+              Legal
+            </h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/privacidad" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Aviso de Privacidad (LOPDP)
+                </Link>
+              </li>
+              <li>
+                <Link href="/terminos" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Términos y Condiciones
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookies" className="text-sm hover:text-white transition-colors flex items-center gap-2">
+                  <span className="text-yellow-500">›</span> Política de Cookies
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Redes Sociales y Marca */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-6 border-b-2 border-yellow-500 inline-block pb-1">
+              Síganos
+            </h3>
+            <div className="mb-6">
+              <Link href="/" className="flex items-center gap-2 mb-4">
+                <Image
+                  src="/Logo.png"
+                  alt="Hotel Loja Logo"
+                  width={50}
+                  height={50}
+                  className="object-contain"
+                />
+                <span className="text-xl font-bold text-white">Hotel Loja</span>
+              </Link>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Su base premium para explorar la riqueza natural y cultural de Loja.
+              </p>
             </div>
-          ))}
+            <div className="flex gap-4">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="bg-gray-800 p-2 rounded-full hover:bg-blue-600 transition-colors text-white" aria-label="Facebook">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="bg-gray-800 p-2 rounded-full hover:bg-pink-600 transition-colors text-white" aria-label="Instagram">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="bg-gray-800 p-2 rounded-full hover:bg-red-600 transition-colors text-white" aria-label="YouTube">
+                <Youtube className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
-          Diseñado por{' '}
-          <a 
-            href="https://cesarreyesjaramillo.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
-          >
-            Cesar Reyes
-          </a>{' '}
-          | Los Almuerzos {currentYear}
+        {/* Sub-Footer: Attribution & Copyright */}
+        <div className="border-t border-gray-800 pt-8 mt-8 text-center">
+          <p className="text-sm text-gray-500">
+            Diseñado por{' '}
+            <a
+              href="https://cesarreyesjaramillo.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-gray-400 hover:text-white transition-colors"
+            >
+              Cesar Reyes
+            </a>{' '}
+            | Hotel Loja {currentYear}
+          </p>
         </div>
       </div>
     </footer>

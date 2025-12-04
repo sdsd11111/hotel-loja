@@ -84,3 +84,19 @@ export const footerData = {
     },
   ],
 };
+
+export interface Habitacion {
+  id: number;
+  nombre: string;
+  slug: string;
+  descripcion: string;
+  amenidades: string[];
+  precio: string;
+  precioNumerico: number;
+  imagen: string;
+  capacidad: {
+    maxAdultos: number;
+    maxNiños: number;
+    camas: number;
+  };
+}

@@ -80,7 +80,7 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
         },
         'google_translate_element'
       );
-      
+
       setIsInitialized(true);
       console.log('Google Translate initialized successfully');
       return true;
@@ -93,13 +93,13 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
   // Load Google Translate script
   useEffect(() => {
     setMounted(true);
-    
+
     // Only run on client-side
     if (typeof document === 'undefined') return;
-    
+
     // Prevent body scroll shift
     document.body.style.top = "0px";
-    
+
     // Cleanup function
     const cleanup = () => {
       try {
@@ -107,7 +107,7 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
         if (script?.parentNode) {
           script.parentNode.removeChild(script);
         }
-        
+
         // @ts-ignore
         if (window[CALLBACK_NAME]) {
           // @ts-ignore
@@ -150,7 +150,7 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
     };
 
     document.body.appendChild(script);
-    
+
     return () => {
       cleanup();
       setMounted(false);
@@ -161,7 +161,7 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
   // Attempt to change language using Google's internal select (no page reload)
   const trySelectChange = useCallback((langCode: string) => {
     if (!mounted) return false;
-    
+
     const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
     if (!select) return false;
 
@@ -185,7 +185,7 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
   // Robust language switching with fallback to cookie-based reload
   const setLanguage = useCallback((lang: "en" | "es") => {
     if (!mounted) return;
-    
+
     // Update UI immediately for better UX
     setActive(lang);
 
@@ -193,37 +193,69 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
     const cookieValue = lang === "en" ? "/es/en" : "/es/es";
     setCookie("googtrans", cookieValue);
 
+    // Function to hide all Google Translate UI elements
+    const hideGoogleWidgets = () => {
+      // Hide the top bar
+      const topBar = document.querySelector('.goog-te-banner-frame');
+      if (topBar && topBar.parentElement) {
+        topBar.parentElement.style.display = 'none';
+      }
+
+      // Hide all skiptranslate elements
+      const skipTranslate = document.querySelectorAll('.skiptranslate');
+      skipTranslate.forEach(el => {
+        (el as HTMLElement).style.display = 'none';
+        (el as HTMLElement).style.visibility = 'hidden';
+      });
+
+      // Hide the widget container
+      const widget = document.getElementById('google_translate_element');
+      if (widget) {
+        widget.style.display = 'none';
+      }
+
+      // Reset body top
+      document.body.style.top = '0px';
+    };
+
+    // Hide widgets immediately
+    hideGoogleWidgets();
+
     // 1) First try to change via the Google Translate select element
     let attempts = 0;
-    const maxAttempts = 5;    // Reduced from 25 to 5 attempts
-    const intervalMs = 100;   // Reduced from 200ms to 100ms
+    const maxAttempts = 5;
+    const intervalMs = 100;
 
     const interval = setInterval(() => {
       if (!mounted) {
         clearInterval(interval);
         return;
       }
-      
+
       attempts++;
       const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
-      
+
       if (select) {
         try {
           select.value = lang;
           const ev = new Event('change', { bubbles: true });
           select.dispatchEvent(ev);
-          
-          // Also try the old method for compatibility
-          const oldEv = new Event('change', { bubbles: true });
-          select.dispatchEvent(oldEv);
-          
+
+          // Hide widgets after language change
+          setTimeout(hideGoogleWidgets, 100);
+          setTimeout(hideGoogleWidgets, 500);
+          setTimeout(hideGoogleWidgets, 1000);
+
           clearInterval(interval);
           return;
         } catch (error) {
           console.error('Error dispatching language change event:', error);
         }
       }
-      
+
+      // Keep hiding widgets during attempts
+      hideGoogleWidgets();
+
       if (attempts >= maxAttempts) {
         clearInterval(interval);
         // If we can't find the select, fall back to page reload
@@ -232,7 +264,7 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
         }
       }
     }, intervalMs);
-    
+
     return () => clearInterval(interval);
   }, [mounted]);
 
@@ -253,9 +285,10 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
     transform: "translateY(-1px)",
   };
 
-  // Determinar el texto del botón basado en el idioma activo
-  const buttonText = active === "es" ? "English" : "Español";
-  
+  // Determinar el texto del botón basado en el idioma activo (compacto)
+  // Muestra el idioma al que puedes cambiar, no el actual
+  const buttonText = active === "en" ? "ES" : "EN";
+
   // Efecto para detectar cambios en el idioma
   useEffect(() => {
     const checkLanguage = () => {
@@ -264,11 +297,53 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
         setActive(cookie[2] as "es" | "en");
       }
     };
-    
+
     // Verificar el idioma cada segundo
     const interval = setInterval(checkLanguage, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Efecto para ocultar widgets de Google Translate continuamente
+  useEffect(() => {
+    if (!mounted) return;
+
+    const hideAllGoogleWidgets = () => {
+      // Hide top bar
+      const topBars = document.querySelectorAll('.goog-te-banner-frame, .goog-te-banner');
+      topBars.forEach(bar => {
+        if (bar.parentElement) {
+          (bar.parentElement as HTMLElement).style.display = 'none';
+        }
+        (bar as HTMLElement).style.display = 'none';
+      });
+
+      // Hide all skiptranslate
+      const skipTranslate = document.querySelectorAll('.skiptranslate');
+      skipTranslate.forEach(el => {
+        (el as HTMLElement).style.display = 'none !important';
+        (el as HTMLElement).style.visibility = 'hidden';
+        (el as HTMLElement).style.opacity = '0';
+      });
+
+      // Hide widget
+      const widget = document.getElementById('google_translate_element');
+      if (widget) {
+        widget.style.display = 'none';
+      }
+
+      // Reset body
+      document.body.style.top = '0px';
+      document.body.style.position = 'static';
+    };
+
+    // Run immediately
+    hideAllGoogleWidgets();
+
+    // Run every 100ms to catch dynamically added elements
+    const interval = setInterval(hideAllGoogleWidgets, 100);
+
+    return () => clearInterval(interval);
+  }, [mounted]);
 
   // No renderizar el botón flotante si no está en el header
   if (!inHeader) {
@@ -297,7 +372,7 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
             ...btnBase,
             background: "#3b82f6",
             color: 'white',
-            minWidth: '90px',
+            minWidth: '50px',
             textAlign: 'center',
             padding: '0.4rem 0.8rem',
             fontSize: '0.9rem',
@@ -325,9 +400,22 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
       {/* Hidden container required by Google Translate */}
       <div id="google_translate_element" style={{ display: "none" }} />
       <style jsx global>{`
-        /* === Ocultar la barra superior de Google Translate === */
+        /* === Ocultar TODOS los elementos de Google Translate === */
         body > .skiptranslate {
           display: none !important;
+        }
+
+        /* Ocultar el contenedor principal del widget */
+        #google_translate_element,
+        #google_translate_element *,
+        .goog-te-gadget,
+        .goog-te-gadget * {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          height: 0 !important;
+          width: 0 !important;
+          overflow: hidden !important;
         }
 
         /* Evitar desplazamiento extra por la barra oculta */
@@ -335,19 +423,41 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
           top: 0 !important;
         }
 
-        /* Ocultar el popup de opciones de Google Translate */
+        /* Ocultar el popup de opciones y dropdown de Google Translate */
         .goog-te-banner-frame.skiptranslate,
+        .goog-te-banner-frame,
         .goog-te-balloon-frame,
         .goog-te-gadget-simple,
+        .goog-te-menu-value,
+        .goog-te-menu-frame,
+        .goog-te-combo,
+        select.goog-te-combo,
         .VIpgJd-ZVi9od-ORHb,
-        .VIpgJd-ZVi9od-ORHb * {
+        .VIpgJd-ZVi9od-ORHb *,
+        .VIpgJd-ZVi9od-xl07Ob,
+        .VIpgJd-ZVi9od-xl07Ob * {
           display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+        }
+
+        /* Ocultar cualquier iframe de Google Translate */
+        iframe.goog-te-banner-frame,
+        iframe.goog-te-menu-frame {
+          display: none !important;
+          visibility: hidden !important;
         }
 
         /* Asegurar que no se genere margen adicional */
         html,
         body {
           margin-top: 0 !important;
+        }
+
+        /* Ocultar el widget flotante si aparece */
+        .skiptranslate > div,
+        .skiptranslate iframe {
+          display: none !important;
         }
       `}</style>
     </>

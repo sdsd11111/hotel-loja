@@ -1,24 +1,52 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { FontAwesomeProvider } from "./providers";
 import GoogleTranslateWrapper from "@/components/GoogleTranslateWrapper";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Hero Dinámico - Sitio Web Moderno",
-  description: "Un sitio web moderno con un hero dinámico, header y footer personalizables.",
-  keywords: ["Next.js", "React", "Tailwind CSS", "Hero", "Landing Page"],
-  authors: [{ name: "Tu Nombre" }],
+  title: "Hotel Loja - Experiencia Premium en Ecuador",
+  description: "Hotel de lujo en Loja, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos.",
+  keywords: ["Hotel Loja", "Ecuador", "Hospedaje Premium", "Restaurante", "Spa", "Eventos"],
+  authors: [{ name: "Hotel Loja" }],
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
+  openGraph: {
+    title: "Hotel Loja - Experiencia Premium en Ecuador",
+    description: "Hotel de lujo en Loja, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos. Reserve ahora con el mejor precio garantizado.",
+    url: 'https://hotelloja.com',
+    siteName: 'Hotel Loja',
+    images: [
+      {
+        url: '/Logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Hotel Loja - Experiencia Premium',
+      },
+    ],
+    locale: 'es_EC',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Hotel Loja - Experiencia Premium en Ecuador",
+    description: "Hotel de lujo en Loja, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos.",
+    images: ['/Logo.png'],
+  },
 };
 
 export default function RootLayout({
@@ -28,10 +56,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900 flex flex-col min-h-screen`}>
+      <body className={`${playfairDisplay.variable} ${inter.variable} antialiased bg-white text-gray-900 flex flex-col min-h-screen font-sans`}>
         <FontAwesomeProvider>
           <div className="flex flex-col flex-1">
             {children}
