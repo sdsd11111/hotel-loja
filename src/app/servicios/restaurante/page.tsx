@@ -155,7 +155,7 @@ export default function RestaurantePage() {
                             <ChefHat className="w-8 h-8 text-amber-600" />
                         </div>
                         <p className="text-xl text-gray-700 leading-relaxed">
-                            Nuestro restaurante es el epicentro de la experiencia social y culinaria del Hotel Loja. Bajo la dirección de nuestro Chef Ejecutivo, la filosofía es simple: honrar la rica tradición ecuatoriana a través de técnicas de cocina moderna, ofreciendo un menú dinámico y estacional en un ambiente de elegancia inigualable.
+                            Nuestro restaurante es el epicentro de la experiencia social y culinaria del Hotel Puente Roto. Bajo la dirección de nuestro Chef Ejecutivo, la filosofía es simple: honrar la rica tradición ecuatoriana a través de técnicas de cocina moderna, ofreciendo un menú dinámico y estacional en un ambiente de elegancia inigualable.
                         </p>
                         <div className="w-24 h-1 bg-amber-400 mx-auto rounded-full mt-8"></div>
                     </div>

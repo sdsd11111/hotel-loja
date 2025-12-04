@@ -13,7 +13,7 @@ export const NuestraPropuesta = () => {
                 {/* Header Section */}
                 <div className="max-w-4xl mx-auto text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
-                        Su Experiencia en Loja Comienza Aquí: <br className="hidden md:block" />
+                        Su Experiencia en Cuenca Comienza Aquí: <br className="hidden md:block" />
                         <span className="text-blue-600">Plataforma de Alto Rendimiento y Confianza Total.</span>
                     </h2>
                 </div>
@@ -24,7 +24,7 @@ export const NuestraPropuesta = () => {
                         {/* Central Narrative */}
                         <div className="prose prose-lg text-gray-600">
                             <p className="leading-relaxed inline">
-                                En el corazón de Loja, Ecuador, nuestro hotel no es solo un destino, sino el punto de partida estratégico ideal para explorar la riqueza natural y cultural de la región.
+                                En el corazón de Cuenca, Ecuador, nuestro hotel no es solo un destino, sino el punto de partida estratégico ideal para explorar la riqueza natural y cultural de la región.
                                 <span className={`${isExpanded ? 'inline' : 'hidden'} md:inline`}>
                                     {' '}Hemos diseñado nuestra plataforma digital, bajo la arquitectura de Next.js, no como un simple catálogo, sino como una herramienta de conversión superior.
                                 </span>
@@ -62,7 +62,7 @@ export const NuestraPropuesta = () => {
                                 </div>
                                 <h3 className="text-lg font-bold text-gray-900 mb-2">Enfoque Geocéntrico</h3>
                                 <p className="text-sm text-gray-600">
-                                    Explore Loja con Nosotros. Ubicación estratégica para su aventura.
+                                    Explore Cuenca con Nosotros. Ubicación estratégica para su aventura.
                                 </p>
                             </div>
 
@@ -94,7 +94,7 @@ export const NuestraPropuesta = () => {
                     <div className="relative h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl group">
                         <Image
                             src="/images/home/propuesta-valor.webp"
-                            alt="Esencia del Hotel Loja"
+                            alt="Esencia del Hotel Puente Roto"
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                         />

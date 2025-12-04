@@ -132,7 +132,7 @@ export const AmenidadesCarousel = () => {
                         Comodidad y Servicio Premium: <span className="text-amber-500">Amenidades que Marcan la Diferencia.</span>
                     </h2>
                     <p className="text-lg text-gray-600 leading-relaxed">
-                        Su confort es nuestra prioridad. Disfrute de servicios esenciales diseñados para una estadía placentera en el corazón de Loja.
+                        Su confort es nuestra prioridad. Disfrute de servicios esenciales diseñados para una estadía placentera en el corazón de Cuenca.
                     </p>
                     <div className="w-24 h-1 bg-amber-400 mx-auto rounded-full mt-6"></div>
                 </div>
@@ -202,8 +202,8 @@ export const AmenidadesCarousel = () => {
                                 key={index}
                                 onClick={() => goToSlide(index)}
                                 className={`transition-all duration-300 rounded-full ${index === currentIndex
-                                        ? 'bg-amber-500 w-8 h-3'
-                                        : 'bg-gray-300 hover:bg-gray-400 w-3 h-3'
+                                    ? 'bg-amber-500 w-8 h-3'
+                                    : 'bg-gray-300 hover:bg-gray-400 w-3 h-3'
                                     }`}
                                 aria-label={`Ir a grupo ${index + 1}`}
                             />

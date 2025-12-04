@@ -53,7 +53,7 @@ const habitaciones = [
         id: 4,
         nombre: 'Suite Premium Deluxe',
         slug: 'suite-premium-deluxe',
-        descripcion: 'Lujo y exclusividad garantizados. Sala de estar separada, baño con jacuzzi y balcón privado con vistas panorámicas de Loja.',
+        descripcion: 'Lujo y exclusividad garantizados. Sala de estar separada, baño con jacuzzi y balcón privado con vistas panorámicas de Cuenca.',
         amenidades: [
             'Cama King',
             'Jacuzzi',

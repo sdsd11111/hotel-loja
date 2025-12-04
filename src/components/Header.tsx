@@ -137,14 +137,14 @@ export const Header = ({ logo, className, showReservationSearch = true, reservat
                 <div className="flex items-center flex-shrink-0">
                   <Link href="/" className="flex items-center gap-2">
                     <Image
-                      src="/Logo.png"
-                      alt="Hotel Loja Logo"
+                      src="/logo-v2.png"
+                      alt="Hotel Puente Roto Logo"
                       width={50}
                       height={50}
                       className="object-contain"
                     />
                     <span className="text-2xl font-bold tracking-tight text-white drop-shadow-lg">
-                      Hotel Loja
+                      Hotel Puente Roto
                     </span>
                   </Link>
                 </div>
@@ -251,14 +251,14 @@ export const Header = ({ logo, className, showReservationSearch = true, reservat
               <div className="flex items-center flex-shrink-0">
                 <Link href="/" className="flex items-center gap-2">
                   <Image
-                    src="/Logo.png"
-                    alt="Hotel Loja Logo"
+                    src="/logo-v2.png"
+                    alt="Hotel Puente Roto Logo"
                     width={50}
                     height={50}
                     className="object-contain"
                   />
                   <span className="hidden md:block text-xl font-bold tracking-tight text-gray-900">
-                    Hotel Loja
+                    Hotel Puente Roto
                   </span>
                 </Link>
               </div>

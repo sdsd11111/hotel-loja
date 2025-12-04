@@ -50,7 +50,7 @@ export const HabitacionesOfertas = () => {
                         <span className="text-blue-600">Habitaciones y Ofertas Exclusivas.</span>
                     </h2>
                     <p className="text-lg text-gray-600 leading-relaxed">
-                        Desde el confort ejecutivo hasta el lujo familiar, encuentre la habitación perfecta para su estadía en Loja. Recuerde que al reservar aquí, accede automáticamente a <span className="font-semibold text-gray-900">tarifas exclusivas y servicios adicionales gratuitos</span> que solo encontrará en nuestro sitio web oficial.
+                        Desde el confort ejecutivo hasta el lujo familiar, encuentre la habitación perfecta para su estadía en Cuenca. Recuerde que al reservar aquí, accede automáticamente a <span className="font-semibold text-gray-900">tarifas exclusivas y servicios adicionales gratuitos</span> que solo encontrará en nuestro sitio web oficial.
                     </p>
                 </div>
 

@@ -27,7 +27,7 @@ export default function GalleryPage() {
                 <div className="relative w-full h-[70vh]">
                     <Image
                         src="/images/galeria/hero-galeria.webp"
-                        alt="Galería Hotel Loja"
+                        alt="Galería Hotel Puente Roto"
                         fill
                         className="object-cover"
                         priority
@@ -38,7 +38,7 @@ export default function GalleryPage() {
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="max-w-5xl mx-auto text-center px-4">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                                Galería Hotel Loja
+                                Galería Hotel Puente Roto
                             </h1>
                             <h2 className="text-xl md:text-2xl lg:text-3xl text-white/90 font-medium">
                                 Un recorrido visual por nuestra experiencia premium
@@ -72,7 +72,7 @@ export default function GalleryPage() {
                             <Camera className="w-8 h-8 text-amber-600" />
                         </div>
                         <p className="text-xl text-gray-700 leading-relaxed">
-                            Explore nuestra colección de imágenes de alta calidad. Cada fotografía captura la esencia de nuestra hospitalidad, el diseño de nuestros espacios y la belleza de Loja que nos rodea.
+                            Explore nuestra colección de imágenes de alta calidad. Cada fotografía captura la esencia de nuestra hospitalidad, el diseño de nuestros espacios y la belleza de Cuenca que nos rodea.
                         </p>
                         <div className="w-24 h-1 bg-amber-400 mx-auto rounded-full mt-8"></div>
                     </div>

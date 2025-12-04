@@ -17,13 +17,13 @@ export function generatePageMetadata({
     const fullUrl = `${baseUrl}${path}`;
 
     return {
-        title: `${title} | Hotel Loja`,
+        title: `${title} | Hotel Puente Roto`,
         description,
         openGraph: {
-            title: `${title} | Hotel Loja`,
+            title: `${title} | Hotel Puente Roto`,
             description,
             url: fullUrl,
-            siteName: 'Hotel Loja',
+            siteName: 'Hotel Puente Roto',
             images: [
                 {
                     url: image,
@@ -37,7 +37,7 @@ export function generatePageMetadata({
         },
         twitter: {
             card: 'summary_large_image',
-            title: `${title} | Hotel Loja`,
+            title: `${title} | Hotel Puente Roto`,
             description,
             images: [image],
         },

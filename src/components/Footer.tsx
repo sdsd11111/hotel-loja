@@ -23,7 +23,7 @@ export const Footer = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-1" />
                 <span className="text-sm leading-relaxed">
-                  Juan Jose Pequeña entre Alonso de Mercadillo y Azuay, Loja, Ecuador
+                  Av. Gran Colombia y Benigno Malo, Cuenca, Ecuador
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -34,8 +34,8 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-yellow-500 flex-shrink-0" />
-                <a href="mailto:reservas@hotelloja.com" className="text-sm hover:text-white transition-colors">
-                  reservas@hotelloja.com
+                <a href="mailto:reservas@hotelcuenca.com" className="text-sm hover:text-white transition-colors">
+                  reservas@hotelcuenca.com
                 </a>
               </li>
             </ul>
@@ -107,16 +107,16 @@ export const Footer = () => {
             <div className="mb-6">
               <Link href="/" className="flex items-center gap-2 mb-4">
                 <Image
-                  src="/Logo.png"
-                  alt="Hotel Loja Logo"
+                  src="/logo-v2.png"
+                  alt="Hotel Puente Roto Logo"
                   width={50}
                   height={50}
                   className="object-contain"
                 />
-                <span className="text-xl font-bold text-white">Hotel Loja</span>
+                <span className="text-xl font-bold text-white">Hotel Puente Roto</span>
               </Link>
               <p className="text-sm text-gray-400 leading-relaxed">
-                Su base premium para explorar la riqueza natural y cultural de Loja.
+                Su base premium para explorar la riqueza natural y cultural de Cuenca.
               </p>
             </div>
             <div className="flex gap-4">
@@ -145,7 +145,7 @@ export const Footer = () => {
             >
               Cesar Reyes
             </a>{' '}
-            | Hotel Loja {currentYear}
+            | Hotel Puente Roto {currentYear}
           </p>
         </div>
       </div>

@@ -7,12 +7,12 @@ import Image from 'next/image';
 export const VideoSection = () => {
     const [isPlaying, setIsPlaying] = useState(false);
 
-    // Placeholder video ID (Loja Tourism or similar) - Replace with actual hotel video
+    // Placeholder video ID (Cuenca Tourism or similar) - Replace with actual hotel video
     // Using a generic nature/hotel placeholder for now or a specific YouTube ID if known.
     // For demo: Using a scenic placeholder image and a generic video structure.
-    const videoId = "dQw4w9WgXcQ"; // Placeholder ID (Rick Roll strictly as placeholder, user to replace) -> Better: Use a Loja video ID if possible or just generic.
-    // Let's use a generic Loja tourism video ID if we can, or just leave it blank/commented.
-    // Actually, let's use a real Loja video ID to make it look good immediately: "y8K5A4h5g5k" (Loja Ecuador Turismo)
+    const videoId = "dQw4w9WgXcQ"; // Placeholder ID (Rick Roll strictly as placeholder, user to replace) -> Better: Use a Cuenca video ID if possible or just generic.
+    // Let's use a generic Cuenca tourism video ID if we can, or just leave it blank/commented.
+    // Actually, let's use a real Cuenca video ID to make it look good immediately: "y8K5A4h5g5k" (Cuenca Ecuador Turismo)
     const youtubeId = "y8K5A4h5g5k";
 
     return (
@@ -21,7 +21,7 @@ export const VideoSection = () => {
                 {/* Section Header */}
                 <div className="text-center mb-12 max-w-3xl mx-auto" data-aos="fade-up">
                     <span className="text-blue-600 font-bold tracking-wider uppercase text-sm mb-3 block">
-                        Descubra Loja
+                        Descubra Cuenca
                     </span>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
                         Una Experiencia Visual <br />
@@ -30,7 +30,7 @@ export const VideoSection = () => {
                         </span>
                     </h2>
                     <p className="text-lg text-gray-600 leading-relaxed">
-                        Sumérjase en la atmósfera de nuestro hotel y la belleza de Loja antes de su llegada.
+                        Sumérjase en la atmósfera de nuestro hotel y la belleza de Cuenca antes de su llegada.
                         Un recorrido visual por lo que le espera.
                     </p>
                 </div>
@@ -47,7 +47,7 @@ export const VideoSection = () => {
                                 <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 opacity-80"></div>
                                 {/* If we had an image: <Image src="/video-cover.jpg" fill className="object-cover opacity-60" /> */}
                                 <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                                    <span className="text-9xl font-bold text-white tracking-tighter select-none">LOJA</span>
+                                    <span className="text-9xl font-bold text-white tracking-tighter select-none">CUENCA</span>
                                 </div>
                             </div>
 
@@ -78,7 +78,7 @@ export const VideoSection = () => {
                                 width="100%"
                                 height="100%"
                                 src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&showinfo=0`}
-                                title="Hotel Loja Video"
+                                title="Hotel Puente Roto Video"
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen

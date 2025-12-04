@@ -33,10 +33,10 @@ const ofertasGastronomicas = [
     {
         id: 'bar' as OfertaId,
         nombre: 'Bar & Coctelería',
-        descripcion: 'Un ambiente moderno e informal para disfrutar de cocteles clásicos y creaciones de autor, con la mejor vista de Loja.',
+        descripcion: 'Un ambiente moderno e informal para disfrutar de cocteles clásicos y creaciones de autor, con la mejor vista de Cuenca.',
         horario: '17:00 - 23:00',
         precio: null,
-        especialidad: 'Cóctel "Podocarpus"',
+        especialidad: 'Cóctel "Cajas Sunset"',
         imagen: '/images/restaurante/bar.webp',
         icono: <DollarSign className="w-6 h-6" />
     }
@@ -53,7 +53,7 @@ export const RestauranteHome = () => {
                 {/* Section Title */}
                 <div className="text-center mb-12 max-w-3xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                        Experiencia Gastronómica: <span className="text-amber-500">El Sabor de Loja con Clase Premium.</span>
+                        Experiencia Gastronómica: <span className="text-amber-500">El Sabor de Cuenca con Clase Premium.</span>
                     </h2>
                     <p className="text-lg text-gray-600 leading-relaxed">
                         Nuestro compromiso con la excelencia se extiende a la mesa. Descubra nuestros tres pilares culinarios y reserve su mesa directamente.

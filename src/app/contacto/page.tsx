@@ -49,7 +49,7 @@ const contactInfo = [
         id: 3,
         icono: <MapPin className="w-6 h-6" />,
         titulo: 'Dirección',
-        detalle: 'Juan Jose Pequeña entre Alonso de Mercadillo y Azuay, Loja, Ecuador',
+        detalle: 'Juan Jose Pequeña entre Alonso de Mercadillo y Azuay, Cuenca, Ecuador',
         link: 'https://maps.app.goo.gl/M3W6xPt8dZPtytmy7'
     },
     {
@@ -209,7 +209,7 @@ function ContactoContent() {
                 <section className="relative h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden">
                     <Image
                         src="/images/contacto/hero-contacto.webp"
-                        alt="Contacto Hotel Loja"
+                        alt="Contacto Hotel Puente Roto"
                         fill
                         className="object-cover"
                         priority
@@ -572,21 +572,21 @@ function ContactoContent() {
                                 Nuestra Ubicación
                             </h2>
                             <p className="text-lg text-gray-600">
-                                Encuéntrenos en el corazón de Loja
+                                Encuéntrenos en el corazón de Cuenca
                             </p>
                         </div>
 
                         <div className="max-w-5xl mx-auto">
                             <div className="rounded-2xl overflow-hidden shadow-xl">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7!2d-79.2!3d-4.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMDAnMDAuMCJTIDc5wrAxMicwMC4wIlc!5e0!3m2!1ses!2sec!4v1234567890"
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.720836267368!2d-79.00636892526686!3d-2.896756897079634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91cd22a54825656b%3A0x637995655f417d45!2sCuenca%2C%20Ecuador!5e0!3m2!1ses!2sus!4v1701720000000!5m2!1ses!2sus"
                                     width="100%"
                                     height="450"
                                     style={{ border: 0 }}
                                     allowFullScreen
                                     loading="lazy"
                                     referrerPolicy="no-referrer-when-downgrade"
-                                    title="Ubicación Hotel Loja"
+                                    title="Ubicación Hotel Puente Roto"
                                 ></iframe>
                             </div>
                             <div className="text-center mt-6">

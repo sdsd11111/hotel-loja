@@ -16,26 +16,26 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Hotel Loja - Experiencia Premium en Ecuador",
-  description: "Hotel de lujo en Loja, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos.",
-  keywords: ["Hotel Loja", "Ecuador", "Hospedaje Premium", "Restaurante", "Spa", "Eventos"],
-  authors: [{ name: "Hotel Loja" }],
+  title: "Hotel Puente Roto - Experiencia Premium en Ecuador",
+  description: "Hotel de lujo en Cuenca, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos.",
+  keywords: ["Hotel Puente Roto", "Ecuador", "Hospedaje Premium", "Restaurante", "Spa", "Eventos"],
+  authors: [{ name: "Hotel Puente Roto" }],
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
     apple: '/favicon.ico',
   },
   openGraph: {
-    title: "Hotel Loja - Experiencia Premium en Ecuador",
-    description: "Hotel de lujo en Loja, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos. Reserve ahora con el mejor precio garantizado.",
+    title: "Hotel Puente Roto - Experiencia Premium en Ecuador",
+    description: "Hotel de lujo en Cuenca, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos. Reserve ahora con el mejor precio garantizado.",
     url: 'https://hotelloja.com',
-    siteName: 'Hotel Loja',
+    siteName: 'Hotel Puente Roto',
     images: [
       {
         url: '/Logo.png',
         width: 1200,
         height: 630,
-        alt: 'Hotel Loja - Experiencia Premium',
+        alt: 'Hotel Puente Roto - Experiencia Premium',
       },
     ],
     locale: 'es_EC',
@@ -43,8 +43,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Hotel Loja - Experiencia Premium en Ecuador",
-    description: "Hotel de lujo en Loja, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos.",
+    title: "Hotel Puente Roto - Experiencia Premium en Ecuador",
+    description: "Hotel de lujo en Cuenca, Ecuador. Habitaciones premium, restaurante gourmet, spa y eventos corporativos.",
     images: ['/Logo.png'],
   },
 };

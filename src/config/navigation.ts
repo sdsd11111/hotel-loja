@@ -28,7 +28,7 @@ export const mainNav: NavItemType[] = [
           {
             label: 'Habitaciones Estándar',
             href: '/servicios/habitaciones-confort',
-            description: 'Habitaciones cómodas a los mejores precios en Loja',
+            description: 'Habitaciones cómodas a los mejores precios en Cuenca',
           },
           {
             label: 'Suites Ejecutivas',

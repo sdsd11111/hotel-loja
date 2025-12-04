@@ -11,7 +11,7 @@ const categories = [
     { id: 'amenidades', label: 'Amenidades' },
     { id: 'gastronomia', label: 'Gastronomía' },
     { id: 'eventos', label: 'Eventos y Salones' },
-    { id: 'destino', label: 'Destino (Loja)' },
+    { id: 'destino', label: 'Destino (Cuenca)' },
 ];
 
 // Real Gallery Images
@@ -41,10 +41,10 @@ const galleryImages = [
     { id: 16, src: '/images/eventos/galeria-teatro.webp', alt: 'Auditorio Tipo Teatro', category: 'eventos', width: 600, height: 400 },
 
     // Destino
-    { id: 17, src: '/images/tours/hero-tours.webp', alt: 'Paisajes de Loja', category: 'destino', width: 1920, height: 1200 },
-    { id: 18, src: '/images/tours/tour-podocarpus.webp', alt: 'Parque Nacional Podocarpus', category: 'destino', width: 800, height: 600 },
-    { id: 19, src: '/images/tours/tour-villonaco.webp', alt: 'Parque Eólico Villonaco', category: 'destino', width: 800, height: 600 },
-    { id: 20, src: '/images/tours/tour-loja-historica.webp', alt: 'Centro Histórico de Loja', category: 'destino', width: 800, height: 600 },
+    { id: 17, src: '/images/tours/hero-tours.webp', alt: 'Paisajes de Cuenca', category: 'destino', width: 1920, height: 1200 },
+    { id: 18, src: '/images/tours/tour-podocarpus.webp', alt: 'Parque Nacional Cajas', category: 'destino', width: 800, height: 600 },
+    { id: 19, src: '/images/tours/tour-villonaco.webp', alt: 'Mirador del Turi', category: 'destino', width: 800, height: 600 },
+    { id: 20, src: '/images/tours/tour-loja-historica.webp', alt: 'Centro Histórico de Cuenca', category: 'destino', width: 800, height: 600 },
 ];
 
 export const GalleryGrid = () => {

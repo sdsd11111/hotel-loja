@@ -25,8 +25,8 @@ import {
 const toursDestacados = [
     {
         id: 1,
-        titulo: 'Ruta al Parque Nacional Podocarpus',
-        descripcion: 'Tour guiado de día completo al corazón de la biodiversidad Andina. Ideal para amantes del trekking y observación de aves.',
+        titulo: 'Ruta al Parque Nacional Cajas',
+        descripcion: 'Tour guiado de día completo a las lagunas y biodiversidad andina del Parque Cajas. Ideal para amantes del trekking y observación de aves.',
         enfoque: 'Naturaleza y Biodiversidad',
         imagen: '/images/tours/tour-podocarpus.webp',
         icono: <TreePine className="w-6 h-6" />,
@@ -35,9 +35,9 @@ const toursDestacados = [
     },
     {
         id: 2,
-        titulo: 'Aventura Eólica en Villonaco',
-        descripcion: 'Visita guiada al parque eólico Villonaco, con las mejores vistas panorámicas de Loja y el valle. Perfecto para fotografía.',
-        enfoque: 'Vistas y Tecnología',
+        titulo: 'Miradores del Turi y Barranco',
+        descripcion: 'Tour a los miradores del Turi y el Barranco del Tomebamba, con las mejores vistas panorámicas de Cuenca. Perfecto para fotografía.',
+        enfoque: 'Vistas y Arquitectura',
         imagen: '/images/tours/tour-villonaco.webp',
         icono: <Camera className="w-6 h-6" />,
         duracion: 'Medio día (4 horas)',
@@ -45,8 +45,8 @@ const toursDestacados = [
     },
     {
         id: 3,
-        titulo: 'Loja Histórica y Cultural',
-        descripcion: 'Recorrido a pie por el centro histórico, incluyendo el Museo de la Música y la Puerta de la Ciudad.',
+        titulo: 'Cuenca Histórica y Cultural',
+        descripcion: 'Recorrido a pie por el centro histórico Patrimonio de la Humanidad, incluyendo la Catedral Nueva, Museo Pumapungo y el Mercado 10 de Agosto.',
         enfoque: 'Cultura y Arquitectura',
         imagen: '/images/tours/tour-loja-historica.webp',
         icono: <Landmark className="w-6 h-6" />,
@@ -95,9 +95,9 @@ const beneficios = [
 
 // Puntos de interés para el mapa
 const puntosInteres = [
-    { nombre: 'Hotel Loja', distancia: 'Base de operaciones' },
-    { nombre: 'Parque Podocarpus', distancia: '25 km - 45 min' },
-    { nombre: 'Villonaco', distancia: '18 km - 30 min' },
+    { nombre: 'Hotel Puente Roto', distancia: 'Base de operaciones' },
+    { nombre: 'Parque Nacional Cajas', distancia: '33 km - 50 min' },
+    { nombre: 'Mirador del Turi', distancia: '4 km - 15 min' },
     { nombre: 'Centro Histórico', distancia: '2 km - 5 min' }
 ];
 
@@ -118,7 +118,7 @@ export default function ToursPage() {
                 <div className="relative w-full h-[70vh]">
                     <Image
                         src="/images/tours/hero-tours.webp"
-                        alt="Tours y Experiencias en Loja"
+                        alt="Tours y Experiencias en Cuenca"
                         fill
                         className="object-cover"
                         priority
@@ -129,10 +129,10 @@ export default function ToursPage() {
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="max-w-5xl mx-auto text-center px-4">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                                Tours y Experiencias en Loja
+                                Tours y Experiencias en Cuenca
                             </h1>
                             <h2 className="text-xl md:text-2xl lg:text-3xl text-white/90 font-medium">
-                                Descubra Podocarpus, Villonaco y más con guías expertos
+                                Descubra Cajas, el Turi, el centro histórico y más con guías expertos
                             </h2>
                         </div>
                     </div>
@@ -163,7 +163,7 @@ export default function ToursPage() {
                             <Map className="w-8 h-8 text-green-600" />
                         </div>
                         <p className="text-xl text-gray-700 leading-relaxed">
-                            El Hotel Loja es la base de operaciones ideal para su exploración. Trabajamos con los operadores turísticos más confiables de la región para ofrecerle una variedad de excursiones personalizadas. Nos encargamos de la logística, el transporte seguro y los detalles para que usted solo disfrute de la inmersión en la naturaleza.
+                            El Hotel Puente Roto es la base de operaciones ideal para su exploración. Trabajamos con los operadores turísticos más confiables de la región para ofrecerle una variedad de excursiones personalizadas. Nos encargamos de la logística, el transporte seguro y los detalles para que usted solo disfrute de la inmersión en la naturaleza.
                         </p>
                         <div className="w-24 h-1 bg-amber-400 mx-auto rounded-full mt-8"></div>
                     </div>
@@ -243,7 +243,7 @@ export default function ToursPage() {
                                 Beneficios de Reservar Tours con Nosotros
                             </h3>
                             <p className="text-lg text-gray-600">
-                                Al reservar sus tours con Hotel Loja, obtiene beneficios exclusivos:
+                                Al reservar sus tours con Hotel Puente Roto, obtiene beneficios exclusivos:
                             </p>
                         </div>
 
@@ -280,7 +280,7 @@ export default function ToursPage() {
                                     Ubicación Estratégica
                                 </h3>
                                 <p className="text-lg text-gray-600">
-                                    Hotel Loja: Su base perfecta para explorar la región
+                                    Hotel Puente Roto: Su base perfecta para explorar la región
                                 </p>
                             </div>
 
@@ -288,7 +288,7 @@ export default function ToursPage() {
                             <div className="bg-white rounded-xl overflow-hidden shadow-xl border border-gray-200 mb-8">
                                 <div className="relative aspect-[16/9] w-full">
                                     <iframe
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63680.99831362746!2d-79.20837875!3d-4.0075952!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91cb480661b91d2d%3A0x8e12137cdc1eee09!2sLoja!5e0!3m2!1ses-419!2sec!4v1764796022808!5m2!1ses-419!2sec"
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.720836267368!2d-79.00636892526686!3d-2.896756897079634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91cd22a54825656b%3A0x637995655f417d45!2sCuenca%2C%20Ecuador!5e0!3m2!1ses!2sus!4v1701720000000!5m2!1ses!2sus"
                                         width="100%"
                                         height="100%"
                                         style={{ border: 0 }}

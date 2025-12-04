@@ -151,13 +151,13 @@ export const GaleriaPreview = () => {
                         </span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                        Momentos en Hotel Loja: <br />
+                        Momentos en Hotel Puente Roto: <br />
                         <span className="bg-gradient-to-r from-amber-600 to-yellow-500 bg-clip-text text-transparent">
                             Un Vistazo a Nuestra Experiencia Premium
                         </span>
                     </h2>
                     <p className="text-xl text-gray-600 leading-relaxed">
-                        Cada detalle cuenta. Explore una selección de las mejores imágenes de nuestras instalaciones y la belleza que rodea a nuestro hotel en Loja.
+                        Cada detalle cuenta. Explore una selección de las mejores imágenes de nuestras instalaciones y la belleza que rodea a nuestro hotel en Cuenca.
                     </p>
                     <div className="flex items-center justify-center gap-2 mt-6">
                         <div className="w-12 h-1 bg-gradient-to-r from-transparent to-amber-400 rounded-full"></div>

@@ -30,7 +30,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     console.log('Fetching all platos...');
-    
+
     const { data: platos, error } = await supabase
       .from('platos')
       .select('*')
@@ -39,7 +39,7 @@ export async function GET() {
     if (error) {
       console.error('Error fetching platos:', error);
       return NextResponse.json(
-        { 
+        {
           error: 'Error al obtener los platos',
           details: error.message,
           code: error.code,
@@ -51,7 +51,7 @@ export async function GET() {
 
     console.log(`Found ${platos.length} platos in total`);
     console.log('Active platos:', platos.filter(p => p.activo).map(p => p.titulo));
-    
+
     return NextResponse.json(platos);
   } catch (error) {
     console.error('Unexpected error:', error);
@@ -65,7 +65,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     console.log('Iniciando solicitud POST para crear plato...');
-    
+
     // Verificar el tipo de contenido
     const contentType = request.headers.get('content-type');
     if (!contentType || !contentType.includes('multipart/form-data')) {
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     // Obtener datos del formulario
     const formData = await request.formData();
     console.log('Datos del formulario recibidos');
-    
+
     // Validar que se recibieron los datos del formulario
     if (!formData) {
       console.error('No se recibieron datos del formulario');
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    
+
     // Obtener y validar campos requeridos
     const titulo = formData.get('titulo')?.toString()?.trim() || '';
     const descripcion = formData.get('descripcion')?.toString()?.trim() || '';
@@ -98,9 +98,9 @@ export async function POST(request: Request) {
     const imagen = formData.get('imagen') as File | null;
     const imagen_url = formData.get('imagen_url')?.toString() || '';
 
-    console.log('Datos del formulario:', { 
-      titulo, 
-      descripcion, 
+    console.log('Datos del formulario:', {
+      titulo,
+      descripcion,
       precio,
       activo,
       tieneImagen: !!imagen
@@ -108,30 +108,30 @@ export async function POST(request: Request) {
 
     // Validar campos requeridos
     const validationErrors: Record<string, string> = {};
-    
+
     if (!titulo) validationErrors.titulo = 'El título es requerido';
     else if (titulo.length < 3) validationErrors.titulo = 'El título debe tener al menos 3 caracteres';
-    
+
     if (!descripcion) validationErrors.descripcion = 'La descripción es requerida';
     else if (descripcion.length < 10) validationErrors.descripcion = 'La descripción debe tener al menos 10 caracteres';
-    
+
     if (isNaN(precio)) validationErrors.precio = 'El precio debe ser un número válido';
     else if (precio < 0) validationErrors.precio = 'El precio no puede ser negativo';
-    
+
     // Validar que al menos haya una imagen o una URL de imagen
     if (!imagen?.size && !imagen_url) {
       validationErrors.imagen = 'Debe proporcionar una imagen o una URL de imagen';
     }
-    
+
     // Si hay errores de validación, devolverlos
     if (Object.keys(validationErrors).length > 0) {
       console.error('Errores de validación:', validationErrors);
       return NextResponse.json(
-        { 
+        {
           error: 'Error de validación',
           validationErrors,
-          receivedData: { 
-            titulo: titulo || 'No proporcionado', 
+          receivedData: {
+            titulo: titulo || 'No proporcionado',
             descripcion: descripcion || 'No proporcionada',
             precio: isNaN(precio) ? 'No válido' : precio,
             tieneImagen: !!imagen?.size,
@@ -147,13 +147,13 @@ export async function POST(request: Request) {
     // Manejar carga de imagen si está presente y es un archivo nuevo
     if (imagen && imagen.size > 0) {
       console.log('Procesando imagen adjunta...');
-      
+
       // Validar tipo de archivo
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(imagen.type)) {
         console.error('Tipo de archivo no permitido:', imagen.type);
         return NextResponse.json(
-          { 
+          {
             error: 'Tipo de archivo no permitido',
             details: 'Solo se permiten imágenes JPEG, JPG, PNG o WebP',
             receivedType: imagen.type
@@ -161,26 +161,26 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
-      
+
       // Validar tamaño del archivo (máx 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (imagen.size > maxSize) {
         console.error('Archivo demasiado grande:', imagen.size, 'bytes');
         return NextResponse.json(
-          { 
+          {
             error: 'Archivo demasiado grande',
             details: `El tamaño máximo permitido es de 5MB. Tamaño actual: ${(imagen.size / (1024 * 1024)).toFixed(2)}MB`
           },
           { status: 400 }
         );
       }
-      
+
       const fileExt = imagen.name.split('.').pop()?.toLowerCase() || 'jpg';
       const fileName = `plato_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
       const filePath = `platos/${fileName}`;
 
-      console.log('Subiendo imagen a Supabase Storage:', { 
-        fileName, 
+      console.log('Subiendo imagen a Supabase Storage:', {
+        fileName,
         filePath,
         size: imagen.size,
         type: imagen.type
@@ -212,18 +212,18 @@ export async function POST(request: Request) {
 
         console.log('URL pública de la imagen generada:', publicUrl);
         imagenUrl = publicUrl;
-        
+
       } catch (error) {
         const uploadError = error as Error & { code?: string; hint?: string };
         console.error('Error en el proceso de carga de imagen:', uploadError);
         return NextResponse.json(
-          { 
+          {
             error: 'Error al procesar la imagen',
             details: uploadError.message || 'Error desconocido',
             code: uploadError.code,
             hint: uploadError.hint
           },
-          { 
+          {
             status: 500,
             headers: {
               'Content-Type': 'application/json',
@@ -235,7 +235,7 @@ export async function POST(request: Request) {
     }
 
     console.log('Insertando nuevo plato en la base de datos...');
-    
+
     try {
       // Insertar el nuevo plato en la base de datos
       const { data: plato, error } = await supabase
@@ -262,7 +262,7 @@ export async function POST(request: Request) {
           hint: error.hint,
           message: error.message
         });
-        
+
         // Intentar eliminar la imagen si se subió pero falló la inserción
         if (imagenUrl) {
           try {
@@ -277,9 +277,9 @@ export async function POST(request: Request) {
             console.error('Error al limpiar la imagen después del error:', cleanupError);
           }
         }
-        
+
         return NextResponse.json(
-          { 
+          {
             error: 'Error al guardar el plato en la base de datos',
             details: error.message,
             code: error.code,
@@ -290,22 +290,22 @@ export async function POST(request: Request) {
       }
 
       console.log('Plato creado exitosamente:', plato);
-      return NextResponse.json(plato, { 
+      return NextResponse.json(plato, {
         status: 201,
         headers: {
           'Content-Type': 'application/json',
           'Cache-Control': 'no-store, max-age=0'
         }
       });
-      
+
     } catch (dbError) {
       console.error('Error inesperado al insertar en la base de datos:', dbError);
       return NextResponse.json(
-        { 
+        {
           error: 'Error interno del servidor al procesar la solicitud',
           details: dbError instanceof Error ? dbError.message : 'Error desconocido'
         },
-        { 
+        {
           status: 500,
           headers: {
             'Content-Type': 'application/json',
@@ -317,12 +317,12 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error inesperado en el endpoint POST /api/platos:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Error interno del servidor',
         details: error instanceof Error ? error.message : 'Error desconocido',
         stack: process.env.NODE_ENV === 'development' && error instanceof Error ? error.stack : undefined
       },
-      { 
+      {
         status: 500,
         headers: {
           'Content-Type': 'application/json',

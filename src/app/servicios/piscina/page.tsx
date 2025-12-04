@@ -30,7 +30,7 @@ const caracteristicas = [
         id: 2,
         icono: <Eye className="w-8 h-8" />,
         titulo: 'Vistas',
-        detalle: 'Panorámicas a la ciudad de Loja y el Parque Podocarpus'
+        detalle: 'Panorámicas a la ciudad de Cuenca y las montañas de los Andes'
     },
     {
         id: 3,
@@ -83,7 +83,7 @@ export default function PiscinaPage() {
                 <div className="relative w-full h-[70vh]">
                     <Image
                         src="/images/piscinas/hero-piscina-spa.webp"
-                        alt="Piscina y Spa Hotel Loja"
+                        alt="Piscina y Spa Hotel Puente Roto"
                         fill
                         className="object-cover"
                         priority

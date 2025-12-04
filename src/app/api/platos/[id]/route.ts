@@ -34,7 +34,7 @@ export async function GET(
   const id = params.id;
   try {
     // Using the existing supabase client with service role
-    
+
     const { data: plato, error } = await supabase
       .from('platos')
       .select('*')
@@ -64,43 +64,43 @@ export async function PUT(
   context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   console.log('Solicitud PUT recibida');
-  
+
   // Manejar tanto el caso de Vercel como el local
   const params = await (typeof context.params === 'object' && 'then' in context.params ? context.params : Promise.resolve(context.params));
   let id = params.id;
-  
+
   // Si no se obtuvo el ID de params, intentar de la URL
   if (!id || id === '[id]') {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
     id = pathSegments[pathSegments.length - 1];
   }
-  
+
   console.log('ID del plato a actualizar:', id);
-  
+
   if (!id || id === '[id]') {
     console.error('ID no proporcionado o inválido en la URL');
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: 'ID del plato no proporcionado o inválido',
         receivedId: id || 'undefined',
         url: request.url
-      }), 
+      }),
       { status: 400 }
     );
   }
-  
+
   try {
     const formData = await request.formData();
     console.log('Datos del formulario recibidos:', Object.fromEntries(formData.entries()));
-    
+
     const titulo = formData.get('titulo') as string;
     const descripcion = formData.get('descripcion') as string;
     const precio = parseFloat(formData.get('precio') as string);
     const activo = formData.get('activo') === 'true';
     const imagen = formData.get('imagen') as File | null;
     const imagen_url = formData.get('imagen_url') as string | null;
-    
+
     console.log('Datos procesados:', {
       titulo,
       descripcion,
@@ -112,7 +112,7 @@ export async function PUT(
       imagenName: imagen?.name,
       imagen_url
     });
-    
+
     console.log('Datos recibidos:', {
       titulo,
       descripcion,
@@ -126,27 +126,27 @@ export async function PUT(
     // Validar campos requeridos
     if (!titulo || !descripcion || isNaN(precio)) {
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Faltan campos requeridos',
-          details: { 
-            titulo: !titulo, 
-            descripcion: !descripcion, 
-            precio: isNaN(precio) 
+          details: {
+            titulo: !titulo,
+            descripcion: !descripcion,
+            precio: isNaN(precio)
           }
-        }), 
+        }),
         { status: 400 }
       );
     }
-    
+
     console.log('ID del plato a actualizar:', id);
-    
+
     if (!id || id === '[id]') {
       console.error('ID no proporcionado o inválido:', id);
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'ID del plato no proporcionado o inválido',
           receivedId: id || 'undefined'
-        }), 
+        }),
         { status: 400 }
       );
     }
@@ -157,7 +157,7 @@ export async function PUT(
       // Manejar la carga de imagen si se proporciona una nueva
       if (imagen && imagen.size > 0) {
         console.log('Iniciando subida de imagen...');
-        
+
         // Convertir el archivo a ArrayBuffer
         const fileBuffer = await imagen.arrayBuffer();
         const fileExt = imagen.name.split('.').pop();
@@ -183,14 +183,14 @@ export async function PUT(
         if (uploadError) {
           console.error('Error subiendo imagen:', uploadError);
           return new Response(
-            JSON.stringify({ 
+            JSON.stringify({
               error: 'Error al subir la imagen a Supabase Storage',
               details: {
                 message: uploadError.message,
                 // Usar una propiedad segura que exista en StorageError
                 code: 'storage_error'
               }
-            }), 
+            }),
             { status: 500 }
           );
         }
@@ -209,7 +209,7 @@ export async function PUT(
       // Usar el ID del parámetro de la ruta
       const platoId = id; // Ya extraído al inicio de la función
       console.log('Actualizando plato con ID:', platoId);
-      
+
       if (!platoId) {
         throw new Error('ID del plato no proporcionado');
       }
@@ -224,7 +224,7 @@ export async function PUT(
       };
 
       console.log('Datos a actualizar:', updateData);
-      
+
       // Manejo de la imagen
       if (imagen && imagen.size > 0) {
         // Si hay una nueva imagen, usamos la URL generada
@@ -256,11 +256,11 @@ export async function PUT(
       if (fetchError) {
         console.error('Error fetching plato:', fetchError);
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             error: 'Plato no encontrado',
             details: fetchError,
             id
-          }), 
+          }),
           { status: 404 }
         );
       }
@@ -281,44 +281,44 @@ export async function PUT(
       if (updateError) {
         console.error('Error de Supabase al actualizar:', updateError);
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             error: 'Error al actualizar el plato en la base de datos',
             details: updateError,
             code: updateError.code
-          }), 
+          }),
           { status: 400 }
         );
       }
 
       if (!updatedPlato) {
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             error: 'No se encontró el plato para actualizar',
             id: id
-          }), 
+          }),
           { status: 404 }
         );
       }
 
       return new Response(JSON.stringify(updatedPlato), { status: 200 });
-      
+
     } catch (error) {
       console.error('Error en el proceso de actualización:', error);
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Error durante el proceso de actualización',
           details: error instanceof Error ? error.message : String(error)
-        }), 
+        }),
         { status: 500 }
       );
     }
   } catch (error) {
     console.error('Error inesperado en el servidor:', error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: 'Error interno del servidor',
         details: error instanceof Error ? error.message : String(error)
-      }), 
+      }),
       { status: 500 }
     );
   }
@@ -329,28 +329,28 @@ export async function DELETE(
   context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   console.log('Solicitud DELETE recibida');
-  
+
   // Manejar tanto el caso de Vercel como el local
   const params = await (typeof context.params === 'object' && 'then' in context.params ? context.params : Promise.resolve(context.params));
   let id = params.id;
-  
+
   // Si no se obtuvo el ID de params, intentar de la URL
   if (!id || id === '[id]') {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
     id = pathSegments[pathSegments.length - 1];
   }
-  
+
   console.log('ID del plato a eliminar:', id);
-  
+
   if (!id || id === '[id]') {
     console.error('ID no proporcionado o inválido en la URL');
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: 'ID del plato no proporcionado o inválido',
         receivedId: id || 'undefined',
         url: request.url
-      }), 
+      }),
       { status: 400 }
     );
   }
@@ -369,12 +369,12 @@ export async function DELETE(
       if (fetchError || !plato) {
         console.error('Error al buscar el plato:', fetchError);
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             success: false,
             error: 'Plato no encontrado',
             details: fetchError,
             id
-          }), 
+          }),
           { status: 404 }
         );
       }
@@ -386,13 +386,13 @@ export async function DELETE(
           // Extraer el nombre del archivo de la URL
           const urlParts = plato.imagen_url.split('/');
           const fileName = urlParts[urlParts.length - 1];
-          
+
           if (fileName && fileName !== 'undefined') {
             console.log('Eliminando archivo de almacenamiento:', fileName);
             const { error: deleteError } = await supabase.storage
               .from('platos')
               .remove([fileName]);
-            
+
             if (deleteError) {
               console.error('Error eliminando imagen del almacenamiento:', deleteError);
               // Continuar con la eliminación del plato incluso si falla la eliminación de la imagen
@@ -409,52 +409,52 @@ export async function DELETE(
       // 3. Eliminar el plato de la base de datos
       console.log('Eliminando plato de la base de datos...');
       const { error: deleteError } = await supabase
-      .from('platos')
-      .delete()
-      .eq('id', id);
+        .from('platos')
+        .delete()
+        .eq('id', id);
 
       if (deleteError) {
         console.error('Error de Supabase al eliminar:', deleteError);
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             success: false,
             error: 'Error al eliminar el plato de la base de datos',
             details: deleteError,
             code: deleteError.code
-          }), 
+          }),
           { status: 400 }
         );
       }
 
       console.log('Plato eliminado exitosamente');
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           success: true,
           message: 'Plato eliminado exitosamente',
           id
-        }), 
+        }),
         { status: 200 }
       );
-      
+
     } catch (error) {
       console.error('Error durante el proceso de eliminación:', error);
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           success: false,
           error: 'Error durante el proceso de eliminación',
           details: error instanceof Error ? error.message : String(error)
-        }), 
+        }),
         { status: 500 }
       );
     }
   } catch (error) {
     console.error('Error inesperado en el servidor:', error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: false,
         error: 'Error interno del servidor',
         details: error instanceof Error ? error.message : String(error)
-      }), 
+      }),
       { status: 500 }
     );
   }

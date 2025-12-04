@@ -8,7 +8,7 @@ const reviews = [
     {
         id: 1,
         name: "María Fernanda T.",
-        text: "Una experiencia inolvidable. La ubicación es perfecta para explorar Loja y el servicio es impecable. Definitivamente volveré.",
+        text: "Una experiencia inolvidable. La ubicación es perfecta para explorar Cuenca y el servicio es impecable. Definitivamente volveré.",
         rating: 5,
         source: "TripAdvisor",
         date: "Hace 2 semanas"
@@ -24,7 +24,7 @@ const reviews = [
     {
         id: 3,
         name: "Carlos R.",
-        text: "La mejor opción en Loja. El desayuno es delicioso y las instalaciones son modernas y seguras. Muy recomendado.",
+        text: "La mejor opción en Cuenca. El desayuno es delicioso y las instalaciones son modernas y seguras. Muy recomendado.",
         rating: 4.9,
         source: "Google Reviews",
         date: "Hace 3 semanas"
@@ -117,7 +117,7 @@ export const ConfianzaCredibilidad = () => {
                 {/* Section Title */}
                 <div className="text-center mb-12 max-w-3xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                        Su Experiencia en Loja Comienza Aquí: <span className="text-blue-600">Plataforma de Alto Rendimiento y Confianza Total.</span>
+                        Su Experiencia en Cuenca Comienza Aquí: <span className="text-blue-600">Plataforma de Alto Rendimiento y Confianza Total.</span>
                     </h2>
                     <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full"></div>
                 </div>
@@ -129,8 +129,8 @@ export const ConfianzaCredibilidad = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-bold text-sm md:text-base transition-all duration-300 ${activeTab === tab.id
-                                    ? 'bg-blue-600 text-white shadow-lg scale-105'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                ? 'bg-blue-600 text-white shadow-lg scale-105'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
                             {tab.icon}

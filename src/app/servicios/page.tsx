@@ -46,7 +46,7 @@ const servicios = [
     {
         id: 4,
         titulo: 'Tours y Experiencias',
-        descripcion: 'Planifique sus excursiones al Parque Podocarpus y Villonaco con guías.',
+        descripcion: 'Planifique sus excursiones al Parque Nacional Cajas y el Mirador del Turi con guías.',
         imagen: '/images/servicios/tours-1.webp',
         icono: <Map className="w-8 h-8" />,
         enlace: '/servicios/tours-experiencias'
@@ -65,7 +65,7 @@ const servicios = [
         descripcion: 'Servicio de transporte privado y taxis seguros desde y hacia el aeropuerto.',
         imagen: '/images/servicios/transporte-1.webp',
         icono: <Car className="w-8 h-8" />,
-        enlace: '/servicios/transporte'
+        enlace: '#transporte'
     }
 ];
 
@@ -91,7 +91,7 @@ export default function ServiciosPage() {
                 <div className="relative w-full h-[70vh]">
                     <Image
                         src="/images/servicios/hero-servicios.webp"
-                        alt="Servicios Premium Hotel Loja"
+                        alt="Servicios Premium Hotel Puente Roto"
                         fill
                         className="object-cover"
                         priority
@@ -102,7 +102,7 @@ export default function ServiciosPage() {
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="max-w-5xl mx-auto text-center px-4">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                                Servicios Premium en Hotel Loja
+                                Servicios Premium en Hotel Puente Roto
                             </h1>
                             <h2 className="text-xl md:text-2xl lg:text-3xl text-white/90 font-medium">
                                 Comodidad, bienestar y experiencias únicas
@@ -210,7 +210,7 @@ export default function ServiciosPage() {
                                 </div>
 
                                 {/* Traslados y Transporte */}
-                                <div>
+                                <div id="transporte">
                                     <div className="text-center mb-12">
                                         <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
                                             <Car className="w-8 h-8 text-blue-600" />
@@ -265,7 +265,7 @@ export default function ServiciosPage() {
                                                 <div>
                                                     <h4 className="text-lg font-bold text-gray-900 mb-2">Tours Privados</h4>
                                                     <p className="text-gray-600 mb-2">
-                                                        Transporte privado para excursiones a Podocarpus y Villonaco.
+                                                        Transporte privado para excursiones al Parque Cajas y el Mirador del Turi.
                                                     </p>
                                                     <p className="text-sm text-amber-600 font-semibold">Precio según destino</p>
                                                 </div>
@@ -301,7 +301,7 @@ export default function ServiciosPage() {
                             ¿Listo para Experimentar el Lujo?
                         </h3>
                         <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                            Reserve ahora y descubra por qué Hotel Loja es la mejor opción para su estadía en el sur de Ecuador.
+                            Reserve ahora y descubra por qué Hotel Puente Roto es la mejor opción para su estadía en el sur de Ecuador.
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 justify-center">
                             <Link

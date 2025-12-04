@@ -20,13 +20,13 @@ import {
 } from 'lucide-react';
 
 // Tipos de salas
-type SalaId = 'podocarpus' | 'villonaco';
+type SalaId = 'tomebamba' | 'pumapungo';
 
 // Especificaciones de salas
 const salasEventos = [
     {
-        id: 'podocarpus' as SalaId,
-        nombre: 'Sala Principal "Podocarpus"',
+        id: 'tomebamba' as SalaId,
+        nombre: 'Sala Principal "Tomebamba"',
         capacidadTeatro: '150 personas',
         capacidadBanquete: '90 personas',
         idealPara: 'Convenciones, Bodas, Grandes Conferencias',
@@ -40,8 +40,8 @@ const salasEventos = [
         imagen: '/images/eventos/sala-podocarpus.webp'
     },
     {
-        id: 'villonaco' as SalaId,
-        nombre: 'Sala Ejecutiva "Villonaco"',
+        id: 'pumapungo' as SalaId,
+        nombre: 'Sala Ejecutiva "Pumapungo"',
         capacidadTeatro: '40 personas',
         capacidadBanquete: '15 personas',
         idealPara: 'Reuniones de Directorio, Entrevistas, Talleres',
@@ -94,7 +94,7 @@ const serviciosLinks = [
 ];
 
 export default function EventosPage() {
-    const [salaActiva, setSalaActiva] = useState<SalaId>('podocarpus');
+    const [salaActiva, setSalaActiva] = useState<SalaId>('tomebamba');
     const salaSeleccionada = salasEventos.find(s => s.id === salaActiva) || salasEventos[0];
 
     return (
@@ -106,7 +106,7 @@ export default function EventosPage() {
                 <div className="relative w-full h-[70vh]">
                     <Image
                         src="/images/eventos/hero-eventos.webp"
-                        alt="Salas de Eventos Hotel Loja"
+                        alt="Salas de Eventos Hotel Puente Roto"
                         fill
                         className="object-cover"
                         priority
@@ -148,7 +148,7 @@ export default function EventosPage() {
                 <div className="container mx-auto px-4 py-16">
                     <div className="max-w-4xl mx-auto text-center">
                         <p className="text-xl text-gray-700 leading-relaxed">
-                            Nuestro hotel ofrece las locaciones más versátiles y mejor equipadas de Loja. Contamos con soluciones integrales para eventos corporativos y celebraciones sociales, respaldados por un equipo de planeación profesional que garantiza que cada detalle de su evento sea impecable.
+                            Nuestro hotel ofrece las locaciones más versátiles y mejor equipadas de Cuenca. Contamos con soluciones integrales para eventos corporativos y celebraciones sociales, respaldados por un equipo de planeación profesional que garantiza que cada detalle de su evento sea impecable.
                         </p>
                         <div className="w-24 h-1 bg-amber-400 mx-auto rounded-full mt-8"></div>
                     </div>

@@ -281,7 +281,7 @@ export default function HeroPlatos() {
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-2 leading-tight">
-              Hotel Loja
+              Hotel Puente Roto
             </h1>
             <div className="w-24 h-1 bg-yellow-400 mx-auto my-4"></div>
             <h2 className="text-2xl md:text-3xl text-yellow-400 font-medium mb-6">

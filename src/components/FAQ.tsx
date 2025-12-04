@@ -27,8 +27,8 @@ const faqs = [
     },
     {
         id: 5,
-        question: "¿El hotel está cerca de los principales atractivos de Loja?",
-        answer: "Sí. Nuestro hotel es el punto de partida ideal. Estamos estratégicamente ubicados para acceder fácilmente al Parque Nacional Podocarpus, el Parque Eólico Villonaco y otros sitios clave de la riqueza natural y cultural de Loja."
+        question: "¿El hotel está cerca de los principales atractivos de Cuenca?",
+        answer: "Sí. Nuestro hotel es el punto de partida ideal. Estamos estratégicamente ubicados para acceder fácilmente al Parque Nacional Cajas, el centro histórico (Patrimonio de la Humanidad), los miradores del Turi, el Barranco del Tomebamba y otros sitios clave de la riqueza natural y cultural de Cuenca."
     }
 ];
 

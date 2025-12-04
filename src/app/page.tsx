@@ -27,8 +27,8 @@ const heroSlides = [
   {
     id: 1,
     image: '/images/hero/hero-main.webp',
-    title: 'Hotel Loja',
-    subtitle: 'Experiencia Premium en el Corazón de Loja',
+    title: 'Hotel Puente Roto',
+    subtitle: 'Experiencia Premium en el Corazón de Cuenca',
     description: 'Confort, elegancia y hospitalidad excepcional en el destino más encantador del sur de Ecuador.'
   },
   {

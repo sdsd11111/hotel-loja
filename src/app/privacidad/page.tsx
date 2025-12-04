@@ -40,18 +40,18 @@ export default function PrivacidadPage() {
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introducción</h2>
                             <p className="text-gray-700 leading-relaxed mb-4">
-                                Hotel Loja se compromete a proteger la privacidad y seguridad de los datos personales de nuestros huéspedes, visitantes y usuarios de nuestro sitio web. Esta Política de Privacidad describe cómo recopilamos, usamos, almacenamos y protegemos su información personal de acuerdo con la Ley Orgánica de Protección de Datos Personales (LOPDP) de Ecuador.
+                                Hotel Puente Roto se compromete a proteger la privacidad y seguridad de los datos personales de nuestros huéspedes, visitantes y usuarios de nuestro sitio web. Esta Política de Privacidad describe cómo recopilamos, usamos, almacenamos y protegemos su información personal de acuerdo con la Ley Orgánica de Protección de Datos Personales (LOPDP) de Ecuador.
                             </p>
                         </section>
 
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Responsable del Tratamiento</h2>
                             <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-600">
-                                <p className="font-semibold text-gray-900 mb-2">Hotel Loja</p>
+                                <p className="font-semibold text-gray-900 mb-2">Hotel Puente Roto</p>
                                 <div className="space-y-2 text-gray-700">
                                     <p className="flex items-center gap-2">
                                         <MapPin className="w-4 h-4 text-blue-600" />
-                                        Av. Gran Colombia y Bolívar, Loja - Ecuador
+                                        Av. Gran Colombia y Bolívar, Cuenca - Ecuador
                                     </p>
                                     <p className="flex items-center gap-2">
                                         <Phone className="w-4 h-4 text-blue-600" />
@@ -174,7 +174,7 @@ export default function PrivacidadPage() {
                             <div className="bg-gray-50 p-6 rounded-lg">
                                 <p className="text-gray-700 mb-2"><strong>Email:</strong> <a href="mailto:info@hotelloja.com" className="text-blue-600 hover:underline">info@hotelloja.com</a></p>
                                 <p className="text-gray-700 mb-2"><strong>Teléfono:</strong> (07) 2570-888</p>
-                                <p className="text-gray-700"><strong>Dirección:</strong> Av. Gran Colombia y Bolívar, Loja - Ecuador</p>
+                                <p className="text-gray-700"><strong>Dirección:</strong> Av. Gran Colombia y Bolívar, Cuenca - Ecuador</p>
                             </div>
                         </section>
 
