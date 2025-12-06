@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const apiUrl = process.env.CPANEL_API_URL;
+    const apiKey = process.env.PHP_API_KEY;
 
     if (!apiUrl) {
       return NextResponse.json(
@@ -20,7 +21,10 @@ export async function GET() {
     // Llamar a la API PHP sin filtro de activos (para admin)
     const response = await fetch(apiUrl, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey || '',
+      },
       cache: 'no-store',
     });
 
@@ -81,6 +85,7 @@ export async function POST(request: Request) {
     if (imagen && imagen.size > 0) {
       const uploadApiUrl = process.env.CPANEL_UPLOAD_API_URL ||
         (process.env.CPANEL_API_URL?.replace('api-platos.php', 'upload-imagen.php'));
+      const apiKey = process.env.PHP_API_KEY;
 
       if (!uploadApiUrl) {
         return NextResponse.json(
@@ -94,6 +99,9 @@ export async function POST(request: Request) {
 
       const uploadResponse = await fetch(uploadApiUrl, {
         method: 'POST',
+        headers: {
+          'X-API-Key': apiKey || '',
+        },
         body: uploadFormData,
       });
 
@@ -113,6 +121,7 @@ export async function POST(request: Request) {
 
     // Crear el plato en la API PHP
     const apiUrl = process.env.CPANEL_API_URL;
+    const apiKey = process.env.PHP_API_KEY;
 
     if (!apiUrl) {
       return NextResponse.json(
@@ -131,7 +140,10 @@ export async function POST(request: Request) {
 
     const createResponse = await fetch(apiUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey || '',
+      },
       body: JSON.stringify(platoData),
     });
 

@@ -17,6 +17,13 @@ require_once 'config.php';
 // Obtener método HTTP
 $method = $_SERVER['REQUEST_METHOD'];
 
+// ============================================
+// SEGURIDAD - Verificar autenticación para operaciones de escritura
+// ============================================
+if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
+    verificarAutenticacion();
+}
+
 // Routing según el método
 switch($method) {
     case 'GET':

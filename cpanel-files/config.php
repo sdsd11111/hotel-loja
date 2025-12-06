@@ -1,39 +1,37 @@
 <?php
 /**
  * Configuración de Conexión a Base de Datos MySQL
- * Hotel Puente Roto - cPanel enloja.net
- * 
- * ⚠️ IMPORTANTE: Este archivo contiene credenciales sensibles
- * NO subir a repositorios públicos
+ * Hotel Puente Roto - cPanel
  */
 
 // ============================================
-// CONFIGURACIÓN DE CORS (Múltiples Orígenes)
+// SEGURIDAD - API KEY
 // ============================================
+define('API_KEY', 'enloja_secure_api_key_2024_restaurant_admin_xyz789');
 
-// Lista de orígenes permitidos
+// ============================================
+// SEGURIDAD - CORS RESTRICTIVO
+// ============================================
 $allowed_origins = [
-    'https://hotel-loja.vercel.app',           // Vercel deployment
-    'https://www.enloja.net',                  // Dominio personalizado
-    'http://localhost:3000',                   // Desarrollo local
+    'https://www.enloja.net',
+    'https://enloja.net',
+    'http://localhost:3000', // Para desarrollo
 ];
 
-// Obtener el origen de la petición
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
-// Si el origen está en la lista permitida, agregarlo al header
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
-} else {
-    // Fallback: permitir el primero de la lista (Vercel)
-    header('Access-Control-Allow-Origin: https://hotel-loja.vercel.app');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-API-Key');
+    header('Access-Control-Allow-Credentials: true');
+} else if (!empty($origin)) {
+    // Si hay origin pero no está permitido, rechazar
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Origin not allowed']);
+    exit();
 }
 
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json; charset=UTF-8');
-
 
 // Responder a preflight requests (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -48,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'enloja_platos');
 define('DB_USER', 'enloja_platos');
-define('DB_PASS', 'Olakasetk1.');
+define('DB_PASS', ';4yX8nGtXK[*');
 define('DB_CHARSET', 'utf8mb4');
 
 // ============================================
@@ -131,6 +129,32 @@ function send_error($message, $status_code = 400, $details = null) {
     }
     
     send_json_response($response, $status_code);
+}
+
+/**
+ * Función para verificar autenticación con API Key
+ */
+function verificarAutenticacion() {
+    // Obtener API Key desde headers (compatible con todos los servidores)
+    $apiKey = '';
+    
+    // Método 1: getallheaders() (Apache)
+    if (function_exists('getallheaders')) {
+        $headers = getallheaders();
+        $apiKey = $headers['X-API-Key'] ?? $headers['x-api-key'] ?? '';
+    }
+    
+    // Método 2: $_SERVER (funciona en todos los servidores)
+    if (empty($apiKey)) {
+        $apiKey = $_SERVER['HTTP_X_API_KEY'] ?? '';
+    }
+    
+    // Verificar que coincida con la configurada
+    if ($apiKey !== API_KEY) {
+        send_error('No autorizado. API Key inválida o faltante.', 401);
+    }
+    
+    return true;
 }
 
 ?>

@@ -7,6 +7,7 @@ export async function GET() {
 
   try {
     const apiUrl = process.env.CPANEL_API_URL;
+    const apiKey = process.env.PHP_API_KEY;
 
     if (!apiUrl) {
       console.error('Error: Falta la variable de entorno CPANEL_API_URL');
@@ -22,6 +23,7 @@ export async function GET() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        ...(apiKey ? { 'X-API-Key': apiKey } : {}),
       },
       cache: 'no-store',
     });

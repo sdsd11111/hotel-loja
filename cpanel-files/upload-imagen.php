@@ -6,7 +6,11 @@
  * RUTA: POST /upload-imagen.php
  */
 
+
 require_once 'config.php';
+
+// Verificar autenticación
+verificarAutenticacion();
 
 // Solo permitir POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -17,6 +17,7 @@ export async function GET(
 
   try {
     const apiUrl = process.env.CPANEL_API_URL;
+    const apiKey = process.env.PHP_API_KEY;
 
     if (!apiUrl) {
       return NextResponse.json(
@@ -27,7 +28,10 @@ export async function GET(
 
     const response = await fetch(`${apiUrl}?id=${id}`, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey || '',
+      },
       cache: 'no-store',
     });
 
@@ -111,6 +115,7 @@ export async function PUT(
     // Si hay una nueva imagen, subirla primero
     if (imagen && imagen.size > 0) {
       const uploadApiUrl = process.env.CPANEL_UPLOAD_API_URL || (process.env.CPANEL_API_URL?.replace('api-platos.php', 'upload-imagen.php'));
+      const apiKey = process.env.PHP_API_KEY;
 
       if (!uploadApiUrl) {
         return NextResponse.json(
@@ -124,6 +129,9 @@ export async function PUT(
 
       const uploadResponse = await fetch(uploadApiUrl, {
         method: 'POST',
+        headers: {
+          'X-API-Key': apiKey || '',
+        },
         body: uploadFormData,
       });
 
@@ -149,12 +157,9 @@ export async function PUT(
       activo,
     };
 
-    if (imagen_url) {
-      updateData.imagen_url = imagen_url;
-    }
-
     // Actualizar plato en la API de cPanel
     const apiUrl = process.env.CPANEL_API_URL;
+    const apiKey = process.env.PHP_API_KEY;
 
     if (!apiUrl) {
       return NextResponse.json(
@@ -163,9 +168,19 @@ export async function PUT(
       );
     }
 
+    const updateData: any = {};
+    if (titulo !== undefined) updateData.titulo = titulo;
+    if (descripcion !== undefined) updateData.descripcion = descripcion;
+    if (precio !== undefined) updateData.precio = precio;
+    if (activo !== undefined) updateData.activo = activo;
+    if (imagen_url) updateData.imagen_url = imagen_url;
+
     const updateResponse = await fetch(`${apiUrl}?id=${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey || '',
+      },
       body: JSON.stringify(updateData),
     });
 
@@ -228,6 +243,7 @@ export async function DELETE(
 
   try {
     const apiUrl = process.env.CPANEL_API_URL;
+    const apiKey = process.env.PHP_API_KEY;
 
     if (!apiUrl) {
       return NextResponse.json(
@@ -238,7 +254,10 @@ export async function DELETE(
 
     const response = await fetch(`${apiUrl}?id=${id}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey || '',
+      },
     });
 
     if (!response.ok) {
