@@ -149,14 +149,6 @@ export async function PUT(
       }
     }
 
-    // Preparar datos para actualizar
-    const updateData: any = {
-      titulo,
-      descripcion,
-      precio,
-      activo,
-    };
-
     // Actualizar plato en la API de cPanel
     const apiUrl = process.env.CPANEL_API_URL;
     const apiKey = process.env.PHP_API_KEY;
