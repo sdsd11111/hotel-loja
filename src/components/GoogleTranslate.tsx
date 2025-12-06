@@ -193,6 +193,9 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
     const cookieValue = lang === "en" ? "/es/en" : "/es/es";
     setCookie("googtrans", cookieValue);
 
+    // Also set without /es/ prefix for compatibility
+    setCookie("googtrans", `/${lang}`, 365);
+
     // Function to hide all Google Translate UI elements
     const hideGoogleWidgets = () => {
       // Hide the top bar
@@ -221,51 +224,34 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
     // Hide widgets immediately
     hideGoogleWidgets();
 
-    // 1) First try to change via the Google Translate select element
-    let attempts = 0;
-    const maxAttempts = 5;
-    const intervalMs = 100;
+    // 1) Try to change via the Google Translate select element
+    const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
 
-    const interval = setInterval(() => {
-      if (!mounted) {
-        clearInterval(interval);
+    if (select) {
+      try {
+        select.value = lang;
+
+        // Dispatch multiple events for compatibility
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+
+        // Hide widgets after language change
+        setTimeout(hideGoogleWidgets, 100);
+        setTimeout(hideGoogleWidgets, 500);
+        setTimeout(hideGoogleWidgets, 1000);
+
         return;
+      } catch (error) {
+        console.error('Error changing language:', error);
       }
+    }
 
-      attempts++;
-      const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
-
-      if (select) {
-        try {
-          select.value = lang;
-          const ev = new Event('change', { bubbles: true });
-          select.dispatchEvent(ev);
-
-          // Hide widgets after language change
-          setTimeout(hideGoogleWidgets, 100);
-          setTimeout(hideGoogleWidgets, 500);
-          setTimeout(hideGoogleWidgets, 1000);
-
-          clearInterval(interval);
-          return;
-        } catch (error) {
-          console.error('Error dispatching language change event:', error);
-        }
+    // If no select found, reload to apply cookie
+    setTimeout(() => {
+      if (mounted && !document.querySelector(".goog-te-combo")) {
+        window.location.reload();
       }
-
-      // Keep hiding widgets during attempts
-      hideGoogleWidgets();
-
-      if (attempts >= maxAttempts) {
-        clearInterval(interval);
-        // If we can't find the select, fall back to page reload
-        if (mounted) {
-          window.location.reload();
-        }
-      }
-    }, intervalMs);
-
-    return () => clearInterval(interval);
+    }, 500);
   }, [mounted]);
 
   // Base button styles
@@ -289,19 +275,8 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
   // Muestra el idioma al que puedes cambiar, no el actual
   const buttonText = active === "en" ? "ES" : "EN";
 
-  // Efecto para detectar cambios en el idioma
-  useEffect(() => {
-    const checkLanguage = () => {
-      const cookie = document.cookie.match(/googtrans=\/([a-z]{2})\/([a-z]{2})/);
-      if (cookie && cookie[2]) {
-        setActive(cookie[2] as "es" | "en");
-      }
-    };
-
-    // Verificar el idioma cada segundo
-    const interval = setInterval(checkLanguage, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  // NO usar intervalo para detectar cambios - causa conflictos
+  // El estado 'active' se maneja solo con setLanguage
 
   // Efecto para ocultar widgets de Google Translate continuamente
   useEffect(() => {
