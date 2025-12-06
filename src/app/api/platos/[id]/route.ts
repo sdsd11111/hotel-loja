@@ -1,57 +1,55 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase URL or service role key');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
-
-const platoUpdateSchema = z.object({
-  titulo: z.string().min(3, 'El título debe tener al menos 3 caracteres').optional(),
-  descripcion: z.string().min(10, 'La descripción debe tener al menos 10 caracteres').optional(),
-  precio: z.number().min(0, 'El precio no puede ser negativo').optional(),
-  imagen_url: z.string().url('La URL de la imagen no es válida').optional(),
-  activo: z.boolean().optional(),
-});
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * GET /api/platos/[id]
+ * Obtiene un plato específico por ID
+ */
 export async function GET(
   request: NextRequest,
   context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
-  const params = await (typeof context.params === 'object' && 'then' in context.params ? context.params : Promise.resolve(context.params));
+  const params = await (typeof context.params === 'object' && 'then' in context.params
+    ? context.params
+    : Promise.resolve(context.params));
   const id = params.id;
+
   try {
-    // Using the existing supabase client with service role
+    const apiUrl = process.env.CPANEL_API_URL;
 
-    const { data: plato, error } = await supabase
-      .from('platos')
-      .select('*')
-      .eq('id', id)
-      .single();
+    if (!apiUrl) {
+      return NextResponse.json(
+        { error: 'Error de configuración del servidor' },
+        { status: 500 }
+      );
+    }
 
-    if (error) {
-      console.error('Error fetching plato:', error);
+    const response = await fetch(`${apiUrl}?id=${id}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
       return NextResponse.json(
         { error: 'Plato no encontrado' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(plato);
+    const result = await response.json();
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(result.data);
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Error fetching plato:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 }
@@ -59,17 +57,21 @@ export async function GET(
   }
 }
 
+/**
+ * PUT /api/platos/[id]
+ * Actualiza un plato existente
+ */
 export async function PUT(
   request: NextRequest,
   context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   console.log('Solicitud PUT recibida');
 
-  // Manejar tanto el caso de Vercel como el local
-  const params = await (typeof context.params === 'object' && 'then' in context.params ? context.params : Promise.resolve(context.params));
+  const params = await (typeof context.params === 'object' && 'then' in context.params
+    ? context.params
+    : Promise.resolve(context.params));
   let id = params.id;
 
-  // Si no se obtuvo el ID de params, intentar de la URL
   if (!id || id === '[id]') {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
@@ -79,262 +81,136 @@ export async function PUT(
   console.log('ID del plato a actualizar:', id);
 
   if (!id || id === '[id]') {
-    console.error('ID no proporcionado o inválido en la URL');
-    return new Response(
-      JSON.stringify({
-        error: 'ID del plato no proporcionado o inválido',
-        receivedId: id || 'undefined',
-        url: request.url
-      }),
+    return NextResponse.json(
+      { error: 'ID del plato no proporcionado o inválido' },
       { status: 400 }
     );
   }
 
   try {
     const formData = await request.formData();
-    console.log('Datos del formulario recibidos:', Object.fromEntries(formData.entries()));
+    console.log('Datos del formulario recibidos');
 
     const titulo = formData.get('titulo') as string;
     const descripcion = formData.get('descripcion') as string;
     const precio = parseFloat(formData.get('precio') as string);
     const activo = formData.get('activo') === 'true';
     const imagen = formData.get('imagen') as File | null;
-    const imagen_url = formData.get('imagen_url') as string | null;
-
-    console.log('Datos procesados:', {
-      titulo,
-      descripcion,
-      precio,
-      activo,
-      tieneImagen: !!imagen,
-      imagenSize: imagen?.size,
-      imagenType: imagen?.type,
-      imagenName: imagen?.name,
-      imagen_url
-    });
-
-    console.log('Datos recibidos:', {
-      titulo,
-      descripcion,
-      precio,
-      activo,
-      tieneImagen: !!imagen,
-      tieneImagenUrl: !!imagen_url,
-      id
-    });
+    const imagen_url_existente = formData.get('imagen_url') as string | null;
 
     // Validar campos requeridos
     if (!titulo || !descripcion || isNaN(precio)) {
-      return new Response(
-        JSON.stringify({
-          error: 'Faltan campos requeridos',
-          details: {
-            titulo: !titulo,
-            descripcion: !descripcion,
-            precio: isNaN(precio)
-          }
-        }),
+      return NextResponse.json(
+        { error: 'Faltan campos requeridos' },
         { status: 400 }
       );
     }
 
-    console.log('ID del plato a actualizar:', id);
+    let imagen_url = imagen_url_existente;
 
-    if (!id || id === '[id]') {
-      console.error('ID no proporcionado o inválido:', id);
-      return new Response(
-        JSON.stringify({
-          error: 'ID del plato no proporcionado o inválido',
-          receivedId: id || 'undefined'
-        }),
-        { status: 400 }
-      );
+    // Si hay una nueva imagen, subirla primero
+    if (imagen && imagen.size > 0) {
+      const uploadApiUrl = process.env.CPANEL_UPLOAD_API_URL || (process.env.CPANEL_API_URL?.replace('api-platos.php', 'upload-imagen.php'));
+
+      if (!uploadApiUrl) {
+        return NextResponse.json(
+          { error: 'URL de upload no configurada' },
+          { status: 500 }
+        );
+      }
+
+      const uploadFormData = new FormData();
+      uploadFormData.append('imagen', imagen);
+
+      const uploadResponse = await fetch(uploadApiUrl, {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        return NextResponse.json(
+          { error: 'Error al subir imagen', details: errorData },
+          { status: 500 }
+        );
+      }
+
+      const uploadResult = await uploadResponse.json();
+      if (uploadResult.success && uploadResult.data?.url) {
+        imagen_url = uploadResult.data.url;
+      }
     }
 
-    let imagenUrl = imagen_url || null;
+    // Preparar datos para actualizar
+    const updateData: any = {
+      titulo,
+      descripcion,
+      precio,
+      activo,
+    };
 
-    try {
-      // Manejar la carga de imagen si se proporciona una nueva
-      if (imagen && imagen.size > 0) {
-        console.log('Iniciando subida de imagen...');
+    if (imagen_url) {
+      updateData.imagen_url = imagen_url;
+    }
 
-        // Convertir el archivo a ArrayBuffer
-        const fileBuffer = await imagen.arrayBuffer();
-        const fileExt = imagen.name.split('.').pop();
-        const fileName = `plato_${Date.now()}.${fileExt}`;
-        const filePath = `platos/${fileName}`;
+    // Actualizar plato en la API de cPanel
+    const apiUrl = process.env.CPANEL_API_URL;
 
-        console.log('Subiendo imagen a Supabase Storage...', {
-          bucket: 'platos',
-          filePath,
-          size: imagen.size,
-          type: imagen.type
-        });
-
-        // Subir la imagen
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('platos')
-          .upload(filePath, fileBuffer, {
-            contentType: imagen.type,
-            cacheControl: '3600',
-            upsert: true  // Permitir sobrescribir si ya existe
-          });
-
-        if (uploadError) {
-          console.error('Error subiendo imagen:', uploadError);
-          return new Response(
-            JSON.stringify({
-              error: 'Error al subir la imagen a Supabase Storage',
-              details: {
-                message: uploadError.message,
-                // Usar una propiedad segura que exista en StorageError
-                code: 'storage_error'
-              }
-            }),
-            { status: 500 }
-          );
-        }
-
-        console.log('Imagen subida exitosamente:', uploadData);
-
-        // Obtener URL pública
-        const { data: { publicUrl } } = supabase.storage
-          .from('platos')
-          .getPublicUrl(filePath);
-
-        console.log('URL pública generada:', publicUrl);
-        imagenUrl = publicUrl;
-      }
-
-      // Usar el ID del parámetro de la ruta
-      const platoId = id; // Ya extraído al inicio de la función
-      console.log('Actualizando plato con ID:', platoId);
-
-      if (!platoId) {
-        throw new Error('ID del plato no proporcionado');
-      }
-
-      // Datos a actualizar
-      const updateData: any = {
-        titulo,
-        descripcion,
-        precio,
-        activo,
-        // No incluimos actualizado_el ya que no existe en la base de datos
-      };
-
-      console.log('Datos a actualizar:', updateData);
-
-      // Manejo de la imagen
-      if (imagen && imagen.size > 0) {
-        // Si hay una nueva imagen, usamos la URL generada
-        updateData.imagen_url = imagenUrl;
-        console.log('Actualizando con nueva imagen:', imagenUrl);
-      } else if (imagen_url) {
-        // Si no hay imagen nueva pero hay una URL existente, la mantenemos
-        updateData.imagen_url = imagen_url;
-        console.log('Manteniendo imagen existente:', imagen_url);
-      } else {
-        // Si no hay imagen, la establecemos como null
-        updateData.imagen_url = null;
-        console.log('No hay imagen asociada');
-      }
-
-      // Actualizar el plato en Supabase
-      console.log('Actualizando plato en Supabase con datos:', {
-        platoId,
-        updateData,
-        hasImageUrl: !!imagenUrl
-      });
-
-      const { data: existingPlato, error: fetchError } = await supabase
-        .from('platos')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (fetchError) {
-        console.error('Error fetching plato:', fetchError);
-        return new Response(
-          JSON.stringify({
-            error: 'Plato no encontrado',
-            details: fetchError,
-            id
-          }),
-          { status: 404 }
-        );
-      }
-
-      const { data: updatedPlato, error: updateError } = await supabase
-        .from('platos')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
-
-      console.log('Resultado de la actualización en Supabase:', {
-        updatedPlato,
-        updateError,
-        hasUpdateError: !!updateError
-      });
-
-      if (updateError) {
-        console.error('Error de Supabase al actualizar:', updateError);
-        return new Response(
-          JSON.stringify({
-            error: 'Error al actualizar el plato en la base de datos',
-            details: updateError,
-            code: updateError.code
-          }),
-          { status: 400 }
-        );
-      }
-
-      if (!updatedPlato) {
-        return new Response(
-          JSON.stringify({
-            error: 'No se encontró el plato para actualizar',
-            id: id
-          }),
-          { status: 404 }
-        );
-      }
-
-      return new Response(JSON.stringify(updatedPlato), { status: 200 });
-
-    } catch (error) {
-      console.error('Error en el proceso de actualización:', error);
-      return new Response(
-        JSON.stringify({
-          error: 'Error durante el proceso de actualización',
-          details: error instanceof Error ? error.message : String(error)
-        }),
+    if (!apiUrl) {
+      return NextResponse.json(
+        { error: 'Error de configuración del servidor' },
         { status: 500 }
       );
     }
+
+    const updateResponse = await fetch(`${apiUrl}?id=${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!updateResponse.ok) {
+      const errorData = await updateResponse.json();
+      return NextResponse.json(
+        { error: 'Error al actualizar plato', details: errorData },
+        { status: updateResponse.status }
+      );
+    }
+
+    const result = await updateResponse.json();
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(result.data);
   } catch (error) {
-    console.error('Error inesperado en el servidor:', error);
-    return new Response(
-      JSON.stringify({
-        error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : String(error)
-      }),
+    console.error('Error updating plato:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
       { status: 500 }
     );
   }
 }
 
+/**
+ * DELETE /api/platos/[id]
+ * Elimina un plato (soft delete - marca como inactivo)
+ */
 export async function DELETE(
   request: NextRequest,
   context: { params: { id: string } } | { params: Promise<{ id: string }> }
 ) {
   console.log('Solicitud DELETE recibida');
 
-  // Manejar tanto el caso de Vercel como el local
-  const params = await (typeof context.params === 'object' && 'then' in context.params ? context.params : Promise.resolve(context.params));
+  const params = await (typeof context.params === 'object' && 'then' in context.params
+    ? context.params
+    : Promise.resolve(context.params));
   let id = params.id;
 
-  // Si no se obtuvo el ID de params, intentar de la URL
   if (!id || id === '[id]') {
     const url = new URL(request.url);
     const pathSegments = url.pathname.split('/');
@@ -344,117 +220,53 @@ export async function DELETE(
   console.log('ID del plato a eliminar:', id);
 
   if (!id || id === '[id]') {
-    console.error('ID no proporcionado o inválido en la URL');
-    return new Response(
-      JSON.stringify({
-        error: 'ID del plato no proporcionado o inválido',
-        receivedId: id || 'undefined',
-        url: request.url
-      }),
+    return NextResponse.json(
+      { error: 'ID del plato no proporcionado o inválido' },
       { status: 400 }
     );
   }
 
   try {
+    const apiUrl = process.env.CPANEL_API_URL;
 
-    try {
-      // 1. Obtener el plato para obtener la URL de la imagen
-      console.log('Buscando plato con ID:', id);
-      const { data: plato, error: fetchError } = await supabase
-        .from('platos')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (fetchError || !plato) {
-        console.error('Error al buscar el plato:', fetchError);
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: 'Plato no encontrado',
-            details: fetchError,
-            id
-          }),
-          { status: 404 }
-        );
-      }
-
-      // 2. Si el plato tiene una imagen, eliminarla del almacenamiento
-      if (plato.imagen_url) {
-        console.log('Eliminando imagen asociada al plato:', plato.imagen_url);
-        try {
-          // Extraer el nombre del archivo de la URL
-          const urlParts = plato.imagen_url.split('/');
-          const fileName = urlParts[urlParts.length - 1];
-
-          if (fileName && fileName !== 'undefined') {
-            console.log('Eliminando archivo de almacenamiento:', fileName);
-            const { error: deleteError } = await supabase.storage
-              .from('platos')
-              .remove([fileName]);
-
-            if (deleteError) {
-              console.error('Error eliminando imagen del almacenamiento:', deleteError);
-              // Continuar con la eliminación del plato incluso si falla la eliminación de la imagen
-            } else {
-              console.log('Imagen eliminada exitosamente del almacenamiento');
-            }
-          }
-        } catch (storageError) {
-          console.error('Error procesando eliminación de imagen:', storageError);
-          // Continuar con la eliminación del plato incluso si falla el procesamiento de la imagen
-        }
-      }
-
-      // 3. Eliminar el plato de la base de datos
-      console.log('Eliminando plato de la base de datos...');
-      const { error: deleteError } = await supabase
-        .from('platos')
-        .delete()
-        .eq('id', id);
-
-      if (deleteError) {
-        console.error('Error de Supabase al eliminar:', deleteError);
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: 'Error al eliminar el plato de la base de datos',
-            details: deleteError,
-            code: deleteError.code
-          }),
-          { status: 400 }
-        );
-      }
-
-      console.log('Plato eliminado exitosamente');
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: 'Plato eliminado exitosamente',
-          id
-        }),
-        { status: 200 }
-      );
-
-    } catch (error) {
-      console.error('Error durante el proceso de eliminación:', error);
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Error durante el proceso de eliminación',
-          details: error instanceof Error ? error.message : String(error)
-        }),
+    if (!apiUrl) {
+      return NextResponse.json(
+        { error: 'Error de configuración del servidor' },
         { status: 500 }
       );
     }
+
+    const response = await fetch(`${apiUrl}?id=${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return NextResponse.json(
+        { error: 'Error al eliminar plato', details: errorData },
+        { status: response.status }
+      );
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: result.message,
+      id
+    });
   } catch (error) {
-    console.error('Error inesperado en el servidor:', error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : String(error)
-      }),
+    console.error('Error deleting plato:', error);
+    return NextResponse.json(
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     );
   }

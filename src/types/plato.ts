@@ -1,6 +1,14 @@
-import { Platos } from '@/lib/supabase';
-
-export interface Plato extends Platos {}
+// Tipo principal de Plato
+export interface Plato {
+  id: string;
+  titulo: string;
+  descripcion: string;
+  precio: number;
+  imagen_url: string;
+  activo: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface PlatoFormData {
   titulo: string;
@@ -10,7 +18,7 @@ export interface PlatoFormData {
   activo?: boolean;
 }
 
-export interface PlatoUpdateData extends Partial<PlatoFormData> {}
+export interface PlatoUpdateData extends Partial<PlatoFormData> { }
 
 // Tipos para las respuestas de la API
 export type ApiResponse<T = unknown> = {

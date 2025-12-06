@@ -1,19 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase URL or service role key');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
 
 export const dynamic = 'force-dynamic';
 
@@ -21,49 +6,53 @@ export async function GET() {
   console.log('=== Iniciando solicitud de platos activos ===');
 
   try {
-    // Verificar variables de entorno
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const apiUrl = process.env.CPANEL_API_URL;
 
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Error: Faltan variables de entorno de Supabase');
+    if (!apiUrl) {
+      console.error('Error: Falta la variable de entorno CPANEL_API_URL');
       return NextResponse.json(
         { error: 'Error de configuración del servidor' },
         { status: 500 }
       );
     }
 
-    // Usar el cliente de Supabase con la clave de servicio
-    // Using the existing supabase client with service role
+    console.log('Realizando consulta a la API de cPanel:', apiUrl);
 
-    console.log('Realizando consulta a la base de datos...');
+    const response = await fetch(`${apiUrl}?activos`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
 
-    const { data: platos, error } = await supabase
-      .from('platos')
-      .select('*')
-      .eq('activo', true)
-      .order('created_at', { ascending: false });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Error en la respuesta de la API:', errorData);
+      throw new Error(`Error en la API: ${response.status}`);
+    }
 
-    if (error) {
-      console.error('Error en la consulta de Supabase:', error);
+    const result = await response.json();
+
+    if (!result.success) {
+      console.error('La API devolvió un error:', result.error);
       return NextResponse.json(
         {
           error: 'Error al obtener los platos',
-          details: error.message,
-          code: error.code,
-          hint: error.hint,
-          detailsFull: error.details
+          details: result.error,
         },
         { status: 500 }
       );
     }
+
+    const platos = result.data || [];
 
     console.log(`Se encontraron ${platos.length} platos activos`);
 
     if (platos.length === 0) {
       console.log('No se encontraron platos activos en la base de datos');
     } else {
-      console.log('Platos encontrados:', platos.map(p => ({
+      console.log('Platos encontrados:', platos.map((p: any) => ({
         id: p.id,
         titulo: p.titulo,
         activo: p.activo,
@@ -78,7 +67,6 @@ export async function GET() {
       {
         error: 'Error interno del servidor',
         message: error instanceof Error ? error.message : 'Error desconocido',
-        stack: error instanceof Error ? error.stack : undefined
       },
       { status: 500 }
     );

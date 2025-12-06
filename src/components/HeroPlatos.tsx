@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
+import Head from 'next/head';
 
 // Define the Plato interface
 interface Plato {
@@ -26,7 +27,6 @@ export default function HeroPlatos() {
   // Fetch platos activos from the API
   const fetchPlatosActivos = async () => {
     try {
-      console.log('Fetching platos activos...');
       const response = await fetch('/api/platos-activos', {
         cache: 'no-store',
         headers: {
@@ -36,11 +36,11 @@ export default function HeroPlatos() {
         }
       });
 
-      console.log('Response status:', response.status);
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Error response:', errorData);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error response:', errorData);
+        }
         throw new Error(`Error al cargar los platos: ${response.status}`);
       }
 
@@ -50,19 +50,13 @@ export default function HeroPlatos() {
         throw new Error('Formato de datos inválido recibido del servidor');
       }
 
-      console.log('Platos activos recibidos:', data);
-
-      if (data.length === 0) {
-        console.log('No hay platos activos en la base de datos');
-      } else {
-        console.log(`Se encontraron ${data.length} platos activos`);
-      }
-
       setPlatos(data);
       setError(null);
       return data;
     } catch (err) {
-      console.error('Error fetching platos:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error fetching platos:', err);
+      }
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido al cargar los platos';
       setError(errorMessage);
       throw err;
@@ -92,7 +86,9 @@ export default function HeroPlatos() {
 
   // Handle image loading errors
   const handleImageError = useCallback((platoId: string) => {
-    console.log(`Error loading image for plato ${platoId}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Error loading image for plato ${platoId}`);
+    }
     setImageError(prev => ({
       ...prev,
       [platoId]: true
@@ -115,14 +111,22 @@ export default function HeroPlatos() {
   // Check if current image has error
   const hasImageError = currentPlato ? imageError[currentPlato.id] || false : false;
 
-  // Format price
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2
-    }).format(price);
-  };
+  // Format price - memoized for performance
+  const formatPrice = useMemo(
+    () => (price: number) => {
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+      }).format(price);
+    },
+    []
+  );
+
+  // Calculate next index for prefetching
+  const nextIndex = useMemo(() => {
+    return currentIndex === platos.length - 1 ? 0 : currentIndex + 1;
+  }, [currentIndex, platos.length]);
 
   // Navigation functions
   const goToNextPlato = () => {
@@ -221,95 +225,147 @@ export default function HeroPlatos() {
   }
 
   return (
-    <div className="relative w-full h-[70vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        {currentPlato?.imagen_url && !hasImageError ? (
-          <div className="relative w-full h-full">
-            {isImageLoading && (
-              <div className="absolute inset-0 bg-gray-800 animate-pulse z-10 flex items-center justify-center">
-                <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
-            <Image
-              src={currentPlato.imagen_url}
-              alt={currentPlato.titulo}
-              fill
-              className={`object-cover transition-opacity duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-90'}`}
-              priority={currentIndex === 0}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-              onError={() => {
-                console.error('Error loading image:', currentPlato.imagen_url);
-                handleImageError(currentPlato.id);
-                setIsImageLoading(false);
-              }}
-              onLoad={() => {
-                console.log('Image loaded successfully:', currentPlato.imagen_url);
-                setIsImageLoading(false);
-              }}
-              unoptimized={process.env.NODE_ENV !== 'production'}
-            />
-          </div>
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-            <div className="text-center p-8">
-              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <p className="text-gray-400">Imagen no disponible</p>
-            </div>
-          </div>
-        )}
-        <div className="absolute inset-0 bg-black/50"></div>
-      </div>
+    <>
+      {/* Prefetch next image for smoother transitions */}
+      {platos.length > 1 && platos[nextIndex]?.imagen_url && (
+        <Head>
+          <link rel="prefetch" href={platos[nextIndex].imagen_url} as="image" />
+        </Head>
+      )}
 
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-6xl px-6 py-20 text-center text-white">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-2 leading-tight">
-              Hotel Puente Roto
-            </h1>
-            <div className="w-24 h-1 bg-yellow-400 mx-auto my-4"></div>
-            <h2 className="text-2xl md:text-3xl text-yellow-400 font-medium mb-6">
-              Plato del día
-            </h2>
-
-            <div className="mb-10">
-              <h3 className="text-2xl md:text-3xl font-bold mb-3 text-yellow-300 [text-shadow:_0_2px_4px_rgb(0_0_0_/_80%)]">
-                {currentPlato.titulo}
-              </h3>
-              <p className="text-lg text-white/90 mb-4 [text-shadow:_0_2px_4px_rgb(0_0_0_/_80%)]">
-                {currentPlato.descripcion}
-              </p>
-              <div className="text-2xl font-bold text-white [text-shadow:_0_2px_4px_rgb(0_0_0_/_80%)]">
-                {currentPlato.precio > 0 ? formatPrice(currentPlato.precio) : 'Precio no disponible'}
-              </div>
-            </div>
-
-            <div className="flex justify-center mb-8">
-              <button
-                className="px-6 py-3 md:px-10 md:py-4 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-full text-base md:text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/30 flex items-center gap-2 group"
-                onClick={() => {
-                  alert(`¡Gracias por tu pedido de ${currentPlato.titulo}! Pronto nos pondremos en contacto contigo.`);
+      <div className="relative w-full h-[70vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          {currentPlato?.imagen_url && !hasImageError ? (
+            <div className="relative w-full h-full">
+              {isImageLoading && (
+                <div className="absolute inset-0 bg-gray-800 animate-pulse z-10 flex items-center justify-center">
+                  <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+              <Image
+                src={currentPlato.imagen_url}
+                alt={currentPlato.titulo}
+                fill
+                className={`object-cover transition-opacity duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-90'}`}
+                priority={currentIndex === 0}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                onError={() => {
+                  handleImageError(currentPlato.id);
+                  setIsImageLoading(false);
                 }}
-              >
-                <span>Pide tu plato del día</span>
+                onLoad={() => {
+                  setIsImageLoading(false);
+                }}
+                unoptimized={process.env.NODE_ENV !== 'production'}
+              />
+            </div>
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+              <div className="text-center p-8">
+                <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-gray-400">Imagen no disponible</p>
+              </div>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-6xl px-6 py-20 text-center text-white">
+          <div className="max-w-3xl mx-auto">
+            <div className="mb-8">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-2 leading-tight">
+                Hotel Puente Roto
+              </h1>
+              <div className="w-24 h-1 bg-yellow-400 mx-auto my-4"></div>
+              <h2 className="text-2xl md:text-3xl text-yellow-400 font-medium mb-6">
+                Plato del día
+              </h2>
+
+              <div className="mb-10">
+                <h3 className="text-2xl md:text-3xl font-bold mb-3 text-yellow-300 [text-shadow:_0_2px_4px_rgb(0_0_0_/_80%)]">
+                  {currentPlato.titulo}
+                </h3>
+                <p className="text-lg text-white/90 mb-4 [text-shadow:_0_2px_4px_rgb(0_0_0_/_80%)]">
+                  {currentPlato.descripcion}
+                </p>
+                <div className="text-2xl font-bold text-white [text-shadow:_0_2px_4px_rgb(0_0_0_/_80%)]">
+                  {currentPlato.precio > 0 ? formatPrice(currentPlato.precio) : 'Precio no disponible'}
+                </div>
+              </div>
+
+              <div className="flex justify-center mb-8">
+                <button
+                  className="px-6 py-3 md:px-10 md:py-4 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-full text-base md:text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/30 flex items-center gap-2 group"
+                  onClick={() => {
+                    alert(`¡Gracias por tu pedido de ${currentPlato.titulo}! Pronto nos pondremos en contacto contigo.`);
+                  }}
+                >
+                  <span>Pide tu plato del día</span>
+                  <svg
+                    className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {platos.length > 1 && (
+                <div className="flex items-center justify-center space-x-2 mt-8">
+                  {platos.map((plato, index) => (
+                    <button
+                      key={plato.id}
+                      onClick={() => setCurrentIndex(index)}
+                      className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${index === currentIndex
+                        ? 'bg-yellow-400 w-8 scale-110'
+                        : 'bg-white/50 hover:bg-white/70'
+                        }`}
+                      aria-label={`Ver ${plato.titulo}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Arrows - Professional Design - Only show if more than one dish */}
+        {platos.length > 1 && (
+          <>
+            <button
+              onClick={goToPrevPlato}
+              className="absolute left-0 top-0 bottom-0 z-20 group w-16 md:w-20 bg-gradient-to-r from-black/30 to-transparent hover:from-black/50 transition-all duration-300"
+              aria-label="Plato anterior"
+            >
+              <div className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 flex items-center">
+                <div className="w-8 h-16 border-l-2 border-white/60 group-hover:border-yellow-400 transition-all duration-300"></div>
                 <svg
-                  className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1"
+                  className="w-6 h-6 md:w-7 md:h-7 text-white/80 group-hover:text-yellow-400 -ml-3 transition-all duration-300 group-hover:scale-125"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -319,83 +375,38 @@ export default function HeroPlatos() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    d="M15 19l-7-7 7-7"
                   />
                 </svg>
-              </button>
-            </div>
-
-            {platos.length > 1 && (
-              <div className="flex items-center justify-center space-x-2 mt-8">
-                {platos.map((plato, index) => (
-                  <button
-                    key={plato.id}
-                    onClick={() => setCurrentIndex(index)}
-                    className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${index === currentIndex
-                      ? 'bg-yellow-400 w-8 scale-110'
-                      : 'bg-white/50 hover:bg-white/70'
-                      }`}
-                    aria-label={`Ver ${plato.titulo}`}
-                  />
-                ))}
               </div>
-            )}
-          </div>
-        </div>
+            </button>
+
+            <button
+              onClick={goToNextPlato}
+              className="absolute right-0 top-0 bottom-0 z-20 group w-16 md:w-20 bg-gradient-to-l from-black/30 to-transparent hover:from-black/50 transition-all duration-300"
+              aria-label="Siguiente plato"
+            >
+              <div className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 flex items-center">
+                <svg
+                  className="w-6 h-6 md:w-7 md:h-7 text-white/80 group-hover:text-yellow-400 -mr-3 transition-all duration-300 group-hover:scale-125"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+                <div className="w-8 h-16 border-r-2 border-white/60 group-hover:border-yellow-400 transition-all duration-300"></div>
+              </div>
+            </button>
+          </>
+        )}
       </div>
-
-      {/* Navigation Arrows - Professional Design - Only show if more than one dish */}
-      {platos.length > 1 && (
-        <>
-          <button
-            onClick={goToPrevPlato}
-            className="absolute left-0 top-0 bottom-0 z-20 group w-16 md:w-20 bg-gradient-to-r from-black/30 to-transparent hover:from-black/50 transition-all duration-300"
-            aria-label="Plato anterior"
-          >
-            <div className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 flex items-center">
-              <div className="w-8 h-16 border-l-2 border-white/60 group-hover:border-yellow-400 transition-all duration-300"></div>
-              <svg
-                className="w-6 h-6 md:w-7 md:h-7 text-white/80 group-hover:text-yellow-400 -ml-3 transition-all duration-300 group-hover:scale-125"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </div>
-          </button>
-
-          <button
-            onClick={goToNextPlato}
-            className="absolute right-0 top-0 bottom-0 z-20 group w-16 md:w-20 bg-gradient-to-l from-black/30 to-transparent hover:from-black/50 transition-all duration-300"
-            aria-label="Siguiente plato"
-          >
-            <div className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 flex items-center">
-              <svg
-                className="w-6 h-6 md:w-7 md:h-7 text-white/80 group-hover:text-yellow-400 -mr-3 transition-all duration-300 group-hover:scale-125"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-              <div className="w-8 h-16 border-r-2 border-white/60 group-hover:border-yellow-400 transition-all duration-300"></div>
-            </div>
-          </button>
-        </>
-      )}
-    </div>
+    </>
   );
 }

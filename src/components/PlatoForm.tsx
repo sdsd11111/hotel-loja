@@ -10,9 +10,8 @@ import { Textarea } from './ui/textarea';
 import { Switch } from './ui/switch';
 import { Loader2, Image as ImageIcon, Upload, X } from 'lucide-react';
 import Image from 'next/image';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
@@ -28,7 +27,7 @@ const platoSchema = z.object({
   }),
   imagen: z
     .any()
-    .refine((file) => file?.size <= MAX_FILE_SIZE, 'La imagen debe pesar menos de 5MB')
+    .refine((file) => file?.size <= MAX_FILE_SIZE, 'La imagen debe pesar menos de 1MB')
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
       'Solo se permiten imágenes .jpg, .jpeg, .png y .webp'
@@ -58,7 +57,6 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
   const [previewImage, setPreviewImage] = useState(plato?.imagen_url || '');
   const [imageError, setImageError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = createClientComponentClient();
 
   const {
     register,
@@ -101,7 +99,7 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
 
     // Validar tamaño
     if (file.size > MAX_FILE_SIZE) {
-      setImageError('La imagen es demasiado grande (máx. 5MB)');
+      setImageError('La imagen es demasiado grande (máx. 1MB)');
       return;
     }
 
@@ -123,60 +121,19 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
     }
   };
 
-  const uploadImage = async (file: File) => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      console.log('Subiendo archivo:', { fileName, fileSize: file.size, fileType: file.type });
-
-      // 1. Subir el archivo
-      const { data, error: uploadError } = await supabase.storage
-        .from('platos')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true, // Cambiado a true para permitir sobrescribir
-          contentType: file.type,
-        });
-
-      if (uploadError) {
-        console.error('Error al subir el archivo:', uploadError);
-        throw new Error(`Error al subir la imagen: ${uploadError.message}`);
-      }
-
-      if (!data) {
-        throw new Error('No se recibieron datos al subir la imagen');
-      }
-
-      // 2. Obtener URL pública
-      const { data: { publicUrl } } = supabase.storage
-        .from('platos')
-        .getPublicUrl(data.path);
-
-      if (!publicUrl) {
-        throw new Error('No se pudo obtener la URL pública de la imagen');
-      }
-
-      console.log('Archivo subido correctamente:', publicUrl);
-      return publicUrl;
-    } catch (error) {
-      console.error('Error en uploadImage:', error);
-      throw error; // Relanzar el error para manejarlo en el componente padre
-    }
-  };
+  // Función de upload de imagen eliminada - ahora se maneja en el servidor
 
   const onSubmit = async (formData: PlatoFormValues) => {
     console.log('Iniciando envío del formulario', { formData, plato });
-    
+
     setIsLoading(true);
     setIsUploading(true);
     setImageError('');
-    
+
     try {
       const isUpdate = !!plato?.id;
       console.log('Modo:', isUpdate ? 'Actualización' : 'Creación', 'ID:', plato?.id);
-      
+
       // Validación de campos requeridos
       if (!formData.titulo || !formData.descripcion || !formData.precio) {
         const errorMsg = 'Todos los campos son obligatorios';
@@ -189,12 +146,12 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
       formDataToSend.append('descripcion', formData.descripcion.trim());
       formDataToSend.append('precio', formData.precio.toString());
       formDataToSend.append('activo', formData.activo.toString());
-      
+
       // Si es una actualización, asegurarnos de incluir el ID
       if (isUpdate && plato?.id) {
         formDataToSend.append('id', plato.id);
       }
-      
+
       console.log('Datos del formulario preparados:', {
         titulo: formData.titulo,
         descripcion: formData.descripcion,
@@ -204,7 +161,7 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         tieneImagenUrl: !!plato?.imagen_url,
         isUpdate
       });
-      
+
       // Manejo de la imagen
       if (formData.imagen) {
         console.log('Procesando imagen...');
@@ -223,9 +180,9 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         // Si no hay imagen, asegurarse de que no se pierda la existente
         console.log('No se incluye imagen en la actualización');
       }
-      
+
       const url = isUpdate ? `/api/platos/${plato.id}` : '/api/platos';
-      
+
       console.log('Enviando solicitud a:', url, 'con método:', isUpdate ? 'PUT' : 'POST');
       console.log('Datos del formulario:', {
         titulo: formData.titulo,
@@ -237,7 +194,7 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         isUpdate,
         platoId: plato?.id
       });
-      
+
       console.log('Enviando datos a la API:', {
         url,
         method: isUpdate ? 'PUT' : 'POST',
@@ -250,24 +207,24 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         method: isUpdate ? 'PUT' : 'POST',
         body: formDataToSend,
       });
-      
+
       console.log('Respuesta recibida:', {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok
       });
-      
+
       const responseData = await response.json().catch(() => ({}));
-      
+
       if (!response.ok) {
         console.error('Error en la respuesta:', {
           status: response.status,
           statusText: response.statusText,
           responseData
         });
-        
+
         let errorMessage = `Error al ${isUpdate ? 'actualizar' : 'crear'} el plato`;
-        
+
         if (responseData.error) {
           errorMessage = responseData.error;
         } else if (responseData.message) {
@@ -279,10 +236,10 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         } else if (response.status >= 500) {
           errorMessage = 'Error en el servidor. Por favor, inténtalo de nuevo más tarde.';
         }
-        
+
         throw new Error(errorMessage);
       }
-      
+
       console.log('Plato guardado exitosamente:', responseData);
       onSuccess();
     } catch (error) {
@@ -304,12 +261,12 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Formulario enviado');
-    
+
     try {
       setIsLoading(true);
       const formValues = getValues();
       console.log('Datos del formulario:', formValues);
-      
+
       // Validación básica
       if (!formValues.titulo || !formValues.descripcion || formValues.precio === undefined) {
         console.error('Faltan campos requeridos');
@@ -319,14 +276,14 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         });
         return;
       }
-      
+
       // Crear FormData para el envío
       const formDataToSend = new FormData();
       formDataToSend.append('titulo', formValues.titulo);
       formDataToSend.append('descripcion', formValues.descripcion);
       formDataToSend.append('precio', formValues.precio.toString());
       formDataToSend.append('activo', formValues.activo.toString());
-      
+
       // Si hay una imagen, agregarla al FormData
       if (formValues.imagen) {
         if (formValues.imagen instanceof File) {
@@ -338,30 +295,30 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         // Mantener la imagen existente si no se sube una nueva
         formDataToSend.append('imagen_url', plato.imagen_url);
       }
-      
+
       // Determinar la URL y el método HTTP
       const url = plato?.id ? `/api/platos/${plato.id}` : '/api/platos';
       const method = plato?.id ? 'PUT' : 'POST';
-      
+
       console.log(`Enviando ${method} a ${url}`);
       console.log('Datos a enviar:', Object.fromEntries(formDataToSend.entries()));
-      
+
       // Enviar la solicitud
       const response = await fetch(url, {
         method,
         body: formDataToSend,
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('Error en la respuesta:', errorData);
         throw new Error(errorData.error || 'Error al guardar el plato');
       }
-      
+
       // Éxito
       console.log('Plato guardado exitosamente');
       onSuccess();
-      
+
     } catch (error) {
       console.error('Error al guardar el plato:', error);
       // Mostrar mensaje de error al usuario
@@ -444,7 +401,7 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
             <label className="block text-sm font-medium" htmlFor="imagen">
               Imagen del plato *
             </label>
-            
+
             <input
               type="file"
               id="imagen"
@@ -454,7 +411,7 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
               onChange={handleImageChange}
               disabled={isUploading}
             />
-            
+
             <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center h-64 bg-gray-50">
               {previewImage ? (
                 <div className="relative w-full h-full group">
@@ -491,28 +448,28 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
                     <p className="pl-1">o arrástrala aquí</p>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    PNG, JPG, WEBP hasta 5MB
+                    PNG, JPG, WEBP hasta 1MB
                   </p>
                 </div>
               )}
-              
+
               {isUploading && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-md">
                   <Loader2 className="h-8 w-8 animate-spin text-white" />
                 </div>
               )}
-              
+
               {imageError && (
                 <p className="mt-2 text-sm text-red-500 text-center">{imageError}</p>
               )}
-              
+
               {!previewImage && watch('imagen_url') && (
                 <div className="mt-4 text-sm">
                   <p className="text-gray-600">URL de imagen actual:</p>
                   <p className="text-blue-600 truncate max-w-xs">{watch('imagen_url')}</p>
                 </div>
               )}
-              
+
               <input type="hidden" {...register('imagen_url')} />
             </div>
           </div>
@@ -528,7 +485,7 @@ export default function PlatoForm({ plato, onSuccess, onCancel }: PlatoFormProps
         >
           Cancelar
         </Button>
-        <Button 
+        <Button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           disabled={isLoading || isUploading}
