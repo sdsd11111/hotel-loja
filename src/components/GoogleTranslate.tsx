@@ -33,11 +33,29 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
 
   // Initialize Google Translate
   useEffect(() => {
-    // Check initial language from cookie
-    const cookie = getCookie("googtrans");
-    if (cookie && cookie.includes("/en")) {
-      setCurrentLang("en");
-    }
+    // FORCE Spanish as default - clear any existing Google Translate cookies
+    const clearGoogleTranslateCookies = () => {
+      // Delete all googtrans cookies
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.enloja.net";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=enloja.net";
+
+      // Set Spanish as default
+      setCookie("googtrans", "/es/es");
+    };
+
+    // Clear cookies immediately
+    clearGoogleTranslateCookies();
+
+    // Check current language from cookie AFTER cleanup
+    setTimeout(() => {
+      const cookie = getCookie("googtrans");
+      if (cookie && cookie.includes("/en")) {
+        setCurrentLang("en");
+      } else {
+        setCurrentLang("es");
+      }
+    }, 100);
 
     // Prevent body scroll shift
     document.body.style.top = "0px";
@@ -96,22 +114,31 @@ export default function GoogleTranslate({ inHeader = false }: GoogleTranslatePro
 
   // Handle language switching
   const switchLanguage = (lang: "es" | "en") => {
-    // Update state immediately
+    // Update state first
     setCurrentLang(lang);
 
-    // Set cookie
+    // Clear all Google Translate cookies first
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.enloja.net";
+
+    // Set new cookie with correct format
     const cookieValue = lang === "en" ? "/es/en" : "/es/es";
     setCookie("googtrans", cookieValue);
 
-    // Try to change via select
-    const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
-    if (select) {
-      select.value = lang;
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-    } else {
-      // Reload if select not found
-      window.location.reload();
-    }
+    // Wait a moment then try to change via select
+    setTimeout(() => {
+      const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      if (select) {
+        select.value = lang;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Dispatch input event too for compatibility
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+      } else {
+        // If select not found, reload to apply cookie
+        window.location.reload();
+      }
+    }, 100);
   };
 
   // Hide Google widgets (run once after initialization)
