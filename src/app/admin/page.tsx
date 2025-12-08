@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // id: fix-link
 import AdminPlatosList from '../../components/AdminPlatosList';
 import PlatoForm from '../../components/PlatoForm';
 import { Button } from '../../components/ui/button';
-import { Plus, LogOut } from 'lucide-react';
+import { Plus, LogOut, LayoutDashboard } from 'lucide-react'; // id: fix-icon
 
 type Plato = {
   id: string;
@@ -72,28 +73,28 @@ export default function AdminPage() {
       formData.append('descripcion', platoActual.descripcion);
       formData.append('precio', platoActual.precio.toString());
       formData.append('activo', (!currentStatus).toString());
-      
+
       // Si hay una URL de imagen, la incluimos
       if (platoActual.imagen_url) {
         formData.append('imagen_url', platoActual.imagen_url);
       }
-      
+
       const response = await fetch(`/api/platos/${id}`, {
         method: 'PUT',
         body: formData,
       });
 
       const result = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(result.error || 'Error al actualizar el estado');
       }
 
       // Actualizar el estado local sin necesidad de recargar todo
-      setPlatos(platos.map(plato => 
+      setPlatos(platos.map(plato =>
         plato.id === id ? { ...plato, activo: !currentStatus } : plato
       ));
-      
+
     } catch (error) {
       console.error('Error al cambiar el estado:', error);
       setError(error instanceof Error ? error.message : 'Error al actualizar el estado');
@@ -113,14 +114,14 @@ export default function AdminPage() {
       });
 
       const result = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(result.error || 'Error al eliminar el plato');
       }
 
       // Actualizar el estado local sin necesidad de recargar todo
       setPlatos(platos.filter(plato => plato.id !== id));
-      
+
     } catch (error) {
       console.error('Error al eliminar:', error);
       setError(error instanceof Error ? error.message : 'Error al eliminar el plato');
@@ -151,8 +152,8 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
           <div className="flex space-x-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setSelectedPlato(null);
                 setShowForm(true);
@@ -161,8 +162,14 @@ export default function AdminPage() {
               <Plus className="mr-2 h-4 w-4" />
               Agregar Plato
             </Button>
-            <Button 
-              variant="outline" 
+            <Link href="/admin/blog">
+              <Button variant="secondary" className="bg-amber-100 text-amber-900 border-amber-200 hover:bg-amber-200">
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Gestionar Blog
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
               className="text-red-600 border-red-300 hover:bg-red-50"
               onClick={handleLogout}
             >
@@ -181,8 +188,8 @@ export default function AdminPage() {
               <h2 className="text-xl font-semibold mb-4">
                 {selectedPlato ? 'Editar Plato' : 'Nuevo Plato'}
               </h2>
-              <PlatoForm 
-                plato={selectedPlato} 
+              <PlatoForm
+                plato={selectedPlato}
                 onSuccess={handleFormSuccess}
                 onCancel={() => {
                   setShowForm(false);
@@ -193,9 +200,9 @@ export default function AdminPage() {
           </div>
         )}
 
-        <AdminPlatosList 
-          platos={platos} 
-          isLoading={isLoading} 
+        <AdminPlatosList
+          platos={platos}
+          isLoading={isLoading}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onToggleStatus={handleToggleStatus}

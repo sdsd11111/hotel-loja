@@ -45,6 +45,7 @@ const mainNavigation = [
 // Hamburger menu items (Galería and Contacto)
 const hamburgerNavigation = [
   { label: 'Galería', href: '/galeria' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Contacto', href: '/contacto' },
 ];
 
