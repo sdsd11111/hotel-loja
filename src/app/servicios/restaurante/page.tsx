@@ -7,6 +7,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { headerData } from '@/types';
 import HeroPlatos from '@/components/HeroPlatos';
+import { restaurantMenuCategories, MenuCategory } from '@/data/restaurantMenu';
 import {
     UtensilsCrossed,
     Clock,
@@ -19,8 +20,11 @@ import {
     CheckCircle,
     Coffee,
     Sun,
-    Moon
+    Moon,
+    X,
+    ChevronRight
 } from 'lucide-react';
+import { cn } from '@/lib/utils'; // Assuming you have a cn utility, if not I will use template literals
 
 // Tipos de ofertas
 type OfertaId = 'fusion' | 'ejecutivo' | 'bar';
@@ -117,6 +121,129 @@ const serviciosLinks = [
     { label: 'Piscina & Spa', href: '/servicios/piscina' },
     { label: 'Habitaciones', href: '/habitaciones' }
 ];
+
+// Sub-component for the interactive card
+const MenuCategoryCard = ({ category }: { category: MenuCategory }) => {
+    const [showDishes, setShowDishes] = useState(false);
+
+    const toggleDishes = () => {
+        setShowDishes(!showDishes);
+    };
+
+    return (
+        <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-[520px] relative group w-full">
+            {/* Initial View: Image + Content */}
+            <div
+                className={`absolute inset-0 flex flex-col transition-opacity duration-500 ease-in-out ${showDishes ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    }`}
+            >
+                {/* Image Section */}
+                <div className="relative h-48 w-full shrink-0 overflow-hidden">
+                    <Image
+                        src={category.image || "/images/restaurante/default-plate.webp"}
+                        alt={category.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                    <div className="absolute bottom-4 left-6 right-6">
+                        <div className="inline-flex items-center justify-center p-2 bg-amber-500 rounded-lg mb-2 text-white">
+                            <UtensilsCrossed className="w-5 h-5" />
+                        </div>
+                        <h4 className="text-xl font-bold text-white font-display leading-tight">
+                            {category.title}
+                        </h4>
+                    </div>
+                </div>
+
+                {/* Content Section */}
+                <div className="p-6 flex-1 flex flex-col">
+                    <p className="text-amber-600 font-semibold mb-3 text-sm uppercase tracking-wider">
+                        {category.subtitle}
+                    </p>
+                    <p className="text-gray-600 mb-6 text-sm leading-relaxed line-clamp-4">
+                        {category.description || "Descubra nuestra deliciosa selección de platos preparados con los mejores ingredientes locales."}
+                    </p>
+
+                    <div className="mt-auto">
+                        {category.isLink ? (
+                            <Link
+                                href={category.href || '#'}
+                                className="inline-flex items-center justify-center w-full gap-2 bg-gray-900 text-white hover:bg-amber-600 font-bold py-3 px-6 rounded-lg transition-all duration-300 uppercase text-sm tracking-wide"
+                            >
+                                Ver Carta de {category.title.split(' ')[0]}
+                                <ArrowRight className="w-4 h-4" />
+                            </Link>
+                        ) : (
+                            <button
+                                onClick={toggleDishes}
+                                className="inline-flex items-center justify-center w-full gap-2 bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 uppercase text-sm tracking-wide group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:text-white"
+                            >
+                                Ver Platos
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Revealed View: Dish List */}
+            <div
+                className={`absolute inset-0 bg-white z-10 flex flex-col transition-all duration-500 ease-in-out transform ${showDishes ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+                    }`}
+            >
+                {/* Header of Revealed Card */}
+                <div className="bg-amber-500 p-4 shrink-0 flex items-center justify-between">
+                    <h4 className="text-white font-bold text-lg line-clamp-1">{category.title}</h4>
+                    <button
+                        onClick={toggleDishes}
+                        className="bg-white/20 hover:bg-white/40 text-white rounded-full p-1 transition-colors"
+                        aria-label="Cerrar menú"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {/* Scrollable Dish List */}
+                <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-amber-200 scrollbar-track-transparent">
+                    <ul className="space-y-4">
+                        {category.items.map((item) => (
+                            <li key={item.slug} className="border-b border-gray-100 last:border-0 pb-3 last:pb-0">
+                                <Link
+                                    href={`/servicios/restaurante/platos/${item.slug}`}
+                                    className="block group/item"
+                                >
+                                    <div className="flex justify-between items-start gap-2 mb-1">
+                                        <span className="font-bold text-gray-800 group-hover/item:text-amber-600 transition-colors text-sm">
+                                            {item.name}
+                                        </span>
+                                        <span className="text-amber-600 font-bold text-sm whitespace-nowrap bg-amber-50 px-2 py-0.5 rounded">
+                                            ${item.price?.toFixed(2)}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                                        {item.description}
+                                    </p>
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Footer of Revealed Card */}
+                <div className="p-4 border-t border-gray-100 bg-gray-50 shrink-0 text-center">
+                    <button
+                        onClick={toggleDishes}
+                        className="text-gray-500 hover:text-gray-800 text-sm font-semibold flex items-center justify-center gap-1 mx-auto transition-colors"
+                    >
+                        <X className="w-3 h-3" />
+                        Cerrar lista
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export default function RestaurantePage() {
     const [ofertaActiva, setOfertaActiva] = useState<OfertaId>('fusion');
@@ -263,6 +390,24 @@ export default function RestaurantePage() {
                                         Para garantizar su mesa, especialmente en fines de semana y días festivos, le recomendamos hacer su reserva con anticipación. También ofrecemos capacidad para cenas privadas y eventos especiales.
                                     </p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Sección 4: Nuestro Menú (NUEVO) */}
+                <div className="bg-white py-20 border-t border-gray-100">
+                    <div className="container mx-auto px-4">
+                        <div className="max-w-6xl mx-auto">
+                            <h3 className="text-3xl font-bold text-gray-900 mb-4 text-center">
+                                Nuestro Menú
+                            </h3>
+                            <div className="w-24 h-1 bg-amber-500 mx-auto rounded-full mb-12"></div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {restaurantMenuCategories.map((category) => (
+                                    <MenuCategoryCard key={category.id} category={category} />
+                                ))}
                             </div>
                         </div>
                     </div>
